@@ -6,12 +6,6 @@ import OptimizeDropdown from "../OptimizeDropdown/OptimizeDropdown";
 
 import "./Navbar.scss";
 
-
-// TODO:
-//  - Logo, File, Options, Help sections will be implemented at the left side of the navbar
-//  - Redo/Undo buttons will be displayed at the right side
-//  - Optimize dropdown will be right most part of the navbar
-
 const Navbar = () => {
     const generateExportLines = (type, index) => {
         return {
@@ -21,8 +15,6 @@ const Navbar = () => {
             )
         }
     };
-
-    console.log(["jSON", "SVG", "PNG", "STM"].map((abb, index) => generateExportLines(abb, index)))
 
     return(
         <div className="navbar">

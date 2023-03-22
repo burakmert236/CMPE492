@@ -1,0 +1,42 @@
+.optimize-container {
+    background-color: #50E2AD;
+    border-radius: 30px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+
+    .optimize-title {
+        font-size: 20px;
+        cursor: pointer;
+    }
+}
+
+.optimize-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    button {
+        background-color: #50E2AD !important;
+    }
+}
+
+.ant-switch-checked {
+    background-color: #50E2AD !important;
+}
+
+.ant-switch-inner-checked, .ant-switch-inner-unchecked {
+    color: #215BA6 !important;
+}
+
+.anticon-down {
+    display: none;
+}
+
+.down {
+    margin: 12px 0 0 7px;
+    transform: translateY(0%) rotate(90deg) skewY(30deg) scaleX(.866);
+}
