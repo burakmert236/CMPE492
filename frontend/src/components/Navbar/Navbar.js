@@ -6,7 +6,7 @@ import OptimizeDropdown from "../OptimizeDropdown/OptimizeDropdown";
 
 import "./Navbar.scss";
 
-const Navbar = () => {
+const Navbar = ({commandHandlerRef}) => {
     const generateExportLines = (type, index) => {
         return {
             key: `1-${index}`,
@@ -15,6 +15,13 @@ const Navbar = () => {
             )
         }
     };
+
+    const handleUndo = () => {
+        commandHandlerRef.current.undo();
+    }
+    const handleRedo = () => {
+        commandHandlerRef.current.redo();
+    }
 
     return(
         <div className="navbar">
@@ -45,10 +52,10 @@ const Navbar = () => {
 
             <div className="right-navbar">
                 <div className="redo-undo">
-                    <div className="undo">
+                    <div className="undo" onClick={() => handleUndo()}>
                         <div className="triangle right"></div>
                     </div>
-                    <div className="redo">
+                    <div className="redo" onClick={() => handleRedo()}>
                         <div className="triangle left"></div>
                     </div>
                 </div>
