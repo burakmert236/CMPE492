@@ -1,6 +1,9 @@
 .toolbar-container {
-    width: 80px;
+    width: 300px;
     height: calc(100vh - 60px);
-
     background-color: #F2B84B;
+
+    canvas {
+        margin-top: 10px;
+    }
 }

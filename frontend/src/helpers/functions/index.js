@@ -35,20 +35,25 @@ export const createDiagramNodeTemplate = () => {
                 portId: "", // the default port: if no spot on link data, use closest side
                 fromLinkable: true, toLinkable: true, cursor: "pointer",
                 fill: "white",  // default color
-                strokeWidth: 2
+                strokeWidth: 2,
+                width: 50,
+                height: 50,
             },
-            new go.Binding("fill", "color")
+            new go.Binding("fill", "color"),
+            new go.Binding("width", "width"),
+            new go.Binding("height", "height"),
+            new go.Binding("figure", "figure")
         ),  // shape.fill = data.color
 
         $(go.Panel, "Table",  
             { background: "lightgray", },
-            { defaultAlignment: go.Spot.Left },
+            { defaultAlignment: go.Spot.Center },
             $(go.TextBlock,
                 { 
-                    font: "bold 12pt sans-serif",
+                    text: "Goal",
+                    font: "bold 16pt sans-serif",
                     editable: true,
                     isMultiline: false,
-                    maxSize: new go.Size(200, NaN),
                 },
                 new go.Binding("font", "", function(textBlock) {
                     var panel = textBlock.panel;
@@ -91,17 +96,20 @@ export const createDiagramLinkTemplate = () => {
         new go.Binding("points").makeTwoWay(),
     
         $(go.Shape,  // the link path shape
-            { isPanelMain: true, strokeWidth: 2 }
+            { isPanelMain: true, strokeWidth: 4, strokeDashArray: [0, 0] },
+            new go.Binding("stroke", "color"),
+            new go.Binding("strokeDashArray", "dash"),
         ),
     
         $(go.Shape,  // the arrowhead
-            { toArrow: "Standard", stroke: null }
+            { toArrow: "Standard", stroke: null, scale: 2 },
+            new go.Binding("toArrow", "toArrow")
         ),
 
         $(go.Panel, "Auto",
-            new go.Binding("visible", "isSelected").ofObject(),
+            // new go.Binding("visible", "isSelected").ofObject(),
             $(go.Shape, "RoundedRectangle",  // the link shape
-                { fill: "#F8F8F8", stroke: null },
+                { fill: "#fff", stroke: null },
                 new go.Binding("fill", "color")
             ),
 
@@ -125,16 +133,6 @@ export const createPaletteLinkTemplate = () => {
         { // because the GridLayout.alignment is Location and the nodes have locationSpot == Spot.Center,
           // to line up the Link in the same manner we have to pretend the Link has the same location spot
             locationSpot: go.Spot.Center,
-            selectionAdornmentTemplate:
-                $(go.Adornment, "Link",
-                    { locationSpot: go.Spot.Center },
-                    $(go.Shape,
-                        { isPanelMain: true, fill: null, stroke: "deepskyblue", strokeWidth: 0 }
-                    ),
-                    $(go.Shape,  // the arrowhead
-                        { toArrow: "Standard", stroke: null }
-                    )
-                )
         },
         {
             routing: go.Link.AvoidsNodes,
@@ -145,11 +143,19 @@ export const createPaletteLinkTemplate = () => {
         new go.Binding("points"),
 
         $(go.Shape,  // the link path shape
-            { isPanelMain: true, strokeWidth: 2 }
+            { 
+                isPanelMain: true, 
+                strokeWidth: 4,
+                stroke: "red",
+                strokeDashArray: [0, 0]
+            },
+            new go.Binding("stroke", "color"),
+            new go.Binding("strokeDashArray", "dash"),
         ),
 
         $(go.Shape,  // the arrowhead
-            { toArrow: "Standard", stroke: null }
+            { toArrow: "Standard", stroke: null, scale: 2 },
+            new go.Binding("toArrow", "toArrow"),
         )
     );
 }

@@ -25,16 +25,43 @@ export const diagramConfiguration = {
 };
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
-    { text: "Start", figure: "Ellipse", "size":"75 75", fill: "#00AD5F" },
-    { text: "Step" },
-    { text: "DB", figure: "Database", fill: "lightgray" },
-    { text: "???", figure: "Diamond", fill: "lightskyblue" },
-    { text: "End", figure: "Ellipse", "size":"75 75", fill: "#CE0620" },
     { text: "Comment", figure: "RoundedRectangle", fill: "lightyellow" }
 ];
 
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
-    { points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 40), new go.Point(60, 40)]), color: "red" },
-    { points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 40), new go.Point(60, 40)]), color: "blue" }
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        color: "#50E2AD",
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        color: "#50E2AD",
+        toArrow: "BackwardTriangle"
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        color: "#50E2AD",
+        dash: [4, 2]
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        color: "#50E2AD",
+        dash: [4, 2],
+        toArrow: "Circle"
+    }
 ];
+
+export const paletteConfiguration = { 
+    maxSelectionCount: 1, 
+    allowZoom: false,
+    layout: $(
+        go.GridLayout,
+        {
+            alignment: "Location",
+            cellSize: new go.Size(100, 100),
+            spacing: new go.Size(10, 10),
+            wrappingColumn: 2, // adjust as needed to fit the number of items in a row
+        }
+    )
+};

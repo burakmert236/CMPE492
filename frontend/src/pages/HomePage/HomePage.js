@@ -6,7 +6,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Toolbar from "../../components/Toolbar/Toolbar";
 import Canvas from "../../components/Canvas/Canvas";
 
-import { diagramConfiguration, paletteNodeDataArray, paletteLinkDataArray } from "../../helpers/constants";
+import { diagramConfiguration, paletteNodeDataArray, paletteLinkDataArray, paletteConfiguration } from "../../helpers/constants";
 import { createDiagramNodeTemplate, createDiagramLinkTemplate, createPaletteLinkTemplate } from "../../helpers/functions";
 
 import "./HomePage.scss";
@@ -43,9 +43,9 @@ const HomePage = () => {
     useEffect(() => {
         if(!diagramObject) return;
 
-        const palette = $(go.Palette, paletteRef.current, { maxSelectionCount: 1 });
+        const palette = $(go.Palette, paletteRef.current, paletteConfiguration);
 
-		palette.nodeTemplate = diagramObject.nodeTemplate;
+		palette.nodeTemplateMap = diagramObject.nodeTemplateMap;
 
 		palette.linkTemplate = createPaletteLinkTemplate();
 
@@ -59,8 +59,6 @@ const HomePage = () => {
             <Navbar commandHandlerRef={commandHandlerRef}/>
 
             <div className="homepage-main">
-
-                {/* <div className="palette" ref={paletteRef} style={{ height: "600px", width: "100px"}}></div> */}
 
                 <Toolbar paletteRef={paletteRef}/>
 
