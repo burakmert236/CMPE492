@@ -22,9 +22,33 @@ export const makePort = (name, spot, output, input) => {
 export const showSmallPorts = (node, show) => {
     node.ports.each(port => {
         if (port.portId !== "") {  // don't change the default port, which is the big shape
-            port.fill = show ? "rgba(0,0,0,.3)" : null;
+            port.fill = show ? "rgba(0,0,0,.2)" : null;
         }
     });
+};
+
+export const createPaletteNodeTemplate = () => {
+    return $(go.Node, "Vertical",
+        { locationObjectName: "TB", locationSpot: go.Spot.Center },
+        $(go.Shape,
+            { 
+                width: 60, 
+                height: 60, 
+                fill: "white",
+                margin: new go.Margin(80, 0, 10, 0)
+            },
+            new go.Binding("fill", "color"),
+            new go.Binding("width", "width"),
+            new go.Binding("height", "height")
+        ),
+        $(go.TextBlock, 
+            { 
+                name: "TB",
+                margin: new go.Margin(10, 0, 0, 0)
+            },
+            new go.Binding("text", "text")
+        )
+    );
 };
 
 export const createDiagramNodeTemplate = () => {
@@ -33,11 +57,11 @@ export const createDiagramNodeTemplate = () => {
         $(go.Shape, "RoundedRectangle",
             {
                 portId: "", // the default port: if no spot on link data, use closest side
-                fromLinkable: true, toLinkable: true, cursor: "pointer",
                 fill: "white",  // default color
                 strokeWidth: 2,
-                width: 50,
-                height: 50,
+                width: 70,
+                height: 70,
+                name: "PANEL"
             },
             new go.Binding("fill", "color"),
             new go.Binding("width", "width"),
@@ -46,27 +70,25 @@ export const createDiagramNodeTemplate = () => {
         ),  // shape.fill = data.color
 
         $(go.Panel, "Table",  
-            { background: "lightgray", },
+            { 
+                background: "lightgray", 
+                width: 70,
+                height: 70, 
+            },
+            new go.Binding("background", "color"),
             { defaultAlignment: go.Spot.Center },
             $(go.TextBlock,
                 { 
                     text: "Goal",
-                    font: "bold 16pt sans-serif",
+                    font: "bold 12pt sans-serif",
                     editable: true,
                     isMultiline: false,
                 },
-                new go.Binding("font", "", function(textBlock) {
-                    var panel = textBlock.panel;
-      
-                    if (panel && panel.actualBounds.width > panel.maxSize.width) {
-                        var fontSize = (panel.maxSize.width / panel.actualBounds.width) * textBlock.font.size;
-                        return textBlock.font.fontStyle + " " + fontSize + "pt " + textBlock.font.family;
-                    }
-                    return textBlock.font;
-                }),
-                new go.Binding("text", "key")
             ),
-            $("TreeExpanderButton")
+            $("TreeExpanderButton", 
+                { alignment: go.Spot.TopLeft, alignmentFocus: go.Spot.Top },
+                { visible: true }
+            )
         ),  // textblock.text = data.key
 
         // four small named ports, one on each side:
@@ -96,7 +118,11 @@ export const createDiagramLinkTemplate = () => {
         new go.Binding("points").makeTwoWay(),
     
         $(go.Shape,  // the link path shape
-            { isPanelMain: true, strokeWidth: 4, strokeDashArray: [0, 0] },
+            { 
+                isPanelMain: true, 
+                strokeWidth: 4, 
+                strokeDashArray: [0, 0]
+            },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),
         ),
@@ -117,7 +143,7 @@ export const createDiagramLinkTemplate = () => {
                 {
                     textAlign: "center",
                     font: "10pt helvetica, arial, sans-serif",
-                    stroke: "#919191",
+                    stroke: "black",
                     margin: 2,
                     minSize: new go.Size(10, NaN),
                     editable: true
@@ -138,7 +164,8 @@ export const createPaletteLinkTemplate = () => {
             routing: go.Link.AvoidsNodes,
             curve: go.Link.JumpOver,
             corner: 5,
-            toShortLength: 4
+            toShortLength: 4,
+            margin: 100
         },
         new go.Binding("points"),
 
@@ -147,7 +174,8 @@ export const createPaletteLinkTemplate = () => {
                 isPanelMain: true, 
                 strokeWidth: 4,
                 stroke: "red",
-                strokeDashArray: [0, 0]
+                strokeDashArray: [0, 0],
+                
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),

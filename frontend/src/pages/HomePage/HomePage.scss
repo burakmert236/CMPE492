@@ -7,5 +7,10 @@
     .homepage-main {
         display: flex;
         flex-direction: row;
+
+        .palette-container {
+            display: flex;
+            flex-direction: column;
+        }
     }
 }

@@ -3,11 +3,11 @@ import { useRef, useEffect, useState } from "react";
 import * as go from "gojs";
 
 import Navbar from "../../components/Navbar/Navbar";
-import Toolbar from "../../components/Toolbar/Toolbar";
+import Palette from "../../components/Palette/Palette";
 import Canvas from "../../components/Canvas/Canvas";
 
 import { diagramConfiguration, paletteNodeDataArray, paletteLinkDataArray, paletteConfiguration } from "../../helpers/constants";
-import { createDiagramNodeTemplate, createDiagramLinkTemplate, createPaletteLinkTemplate } from "../../helpers/functions";
+import { createDiagramNodeTemplate, createDiagramLinkTemplate, createPaletteLinkTemplate, createPaletteNodeTemplate } from "../../helpers/functions";
 
 import "./HomePage.scss";
 
@@ -45,9 +45,9 @@ const HomePage = () => {
 
         const palette = $(go.Palette, paletteRef.current, paletteConfiguration);
 
-		palette.nodeTemplateMap = diagramObject.nodeTemplateMap;
+		palette.nodeTemplate = createPaletteNodeTemplate();
 
-		palette.linkTemplate = createPaletteLinkTemplate();
+        palette.linkTemplate = createPaletteLinkTemplate();
 
 		palette.model = new go.GraphLinksModel(paletteNodeDataArray, paletteLinkDataArray)
     
@@ -60,7 +60,9 @@ const HomePage = () => {
 
             <div className="homepage-main">
 
-                <Toolbar paletteRef={paletteRef}/>
+                <div className="palette-container">
+                    <Palette paletteRef={paletteRef}/>
+                </div>
 
                 <Canvas diagramRef={diagramRef}/>
 

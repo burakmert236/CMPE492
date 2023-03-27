@@ -25,7 +25,7 @@ export const diagramConfiguration = {
 };
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
-    { text: "Comment", figure: "RoundedRectangle", fill: "lightyellow" }
+    { text: "Goal Node", color: "lightyellow" }
 ];
 
 export const paletteLinkDataArray = [
@@ -59,8 +59,8 @@ export const paletteConfiguration = {
         go.GridLayout,
         {
             alignment: "Location",
-            cellSize: new go.Size(100, 100),
-            spacing: new go.Size(10, 10),
+            cellSize: new go.Size(50, 50),
+            spacing: new go.Size(10, 20),
             wrappingColumn: 2, // adjust as needed to fit the number of items in a row
         }
     )
