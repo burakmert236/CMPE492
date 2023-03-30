@@ -33,10 +33,10 @@ export const createPaletteNodeTemplate = () => {
         $(go.Shape, "RoundedRectangle",
             { 
                 desiredSize: new go.Size(60, 25),
-                fill: "white",
                 margin: new go.Margin(0, 0, 0, 0),
                 strokeDashArray: null,
-                parameter1: 100
+                parameter1: 100,
+                fill: $(go.Brush, "Linear", { 0.0: "white", 1.0: "gray" }),
             },
             new go.Binding("fill", "color"),
             new go.Binding("width", "width"),
@@ -59,7 +59,7 @@ export const createDiagramNodeTemplate = () => {
         $(go.Shape, "RoundedRectangle",
             {
                 portId: "", // the default port: if no spot on link data, use closest side
-                fill: "white",  // default color
+                fill: "red",  // default color
                 strokeWidth: 2,
                 width: 110,
                 height: 60,
@@ -147,7 +147,7 @@ export const createDiagramLinkTemplate = () => {
                 {
                     textAlign: "center",
                     font: "10pt helvetica, arial, sans-serif",
-                    stroke: "black",
+                    stroke: "white",
                     margin: 2,
                     minSize: new go.Size(10, NaN),
                     editable: true,
@@ -178,7 +178,7 @@ export const createPaletteLinkTemplate = () => {
         $(go.Shape,  // the link path shape
             { 
                 isPanelMain: true, 
-                strokeWidth: 2,
+                strokeWidth: 3,
                 stroke: "red",
                 strokeDashArray: [0, 0],
                 

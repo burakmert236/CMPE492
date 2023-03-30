@@ -7,7 +7,7 @@ export const diagramConfiguration = {
     "draggingTool.isGridSnapEnabled": true,
     "draggingTool.gridSnapCellSize": new go.Size(10, 10),
     "draggingTool.dragsLink": true,
-    "dragSelectingTool.isEnabled": false,
+    "dragSelectingTool.isEnabled": true,
     "linkingTool.isUnconnectedLinkValid": true,
     "linkingTool.portGravity": 20,
     "relinkingTool.isUnconnectedLinkValid": true,
@@ -25,49 +25,52 @@ export const diagramConfiguration = {
 };
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
-    { text: "Goal Node", color: "lightyellow" }
+    { text: "Goal Node", color: "#ACF3DA" }
 ];
 
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "black",
         text: "Refinement",
-        type: "Refinement"
+        type: "Refinement",
+        toArrow: "Triangle"
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "black",
         toArrow: "BackwardTriangle",
         text: "Precedence",
         type: "Precedence"
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "#27ba84",
         dash: [4, 2],
         text: "(+) Cost Contribution",
         type: "(+) Cost Contribution",
+        toArrow: "Triangle"
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "rgb(33, 91, 166)",
         dash: [4, 2],
-        toArrow: "Circle",
+        toArrow: "Triangle",
         text: "(-) Cost Contribution",
         type: "(-) Cost Contribution"
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "#27ba84",
         dash: [4, 2],
+        toArrow: "Circle",
         text: "(+) Value Contribution",
         type: "(+) Value Contribution",
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "rgb(33, 91, 166)",
         dash: [4, 2],
         toArrow: "Circle",
         text: "(-) Value Contribution",
@@ -75,9 +78,9 @@ export const paletteLinkDataArray = [
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
-        color: "#50E2AD",
+        color: "red",
         dash: [4, 2],
-        toArrow: "Circle",
+        toArrow: "Triangle",
         text: "Exclusion",
         type: "Exclusion"
     }
