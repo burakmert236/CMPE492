@@ -1,16 +1,18 @@
 .homepage-layout {
     width: 100vw;
     height: 100vh;
-
+    display: flex;
+    flex-direction: column;
     background-color: rgb(255, 253, 237);
 
-    .homepage-main {
+    .palette-container {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        height: 60px;
+        padding: 8px;
+    }
 
-        .palette-container {
-            display: flex;
-            flex-direction: column;
-        }
+    .homepage-main {
+        height: calc(100% - 170px);
     }
 }
