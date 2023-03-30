@@ -31,37 +31,67 @@ export const paletteNodeDataArray = [  // specify the contents of the Palette
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
         color: "#50E2AD",
+        text: "Refinement",
+        type: "Refinement"
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
         color: "#50E2AD",
-        toArrow: "BackwardTriangle"
+        toArrow: "BackwardTriangle",
+        text: "Precedence",
+        type: "Precedence"
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
-        color: "#50E2AD",
-        dash: [4, 2]
-    },
-    { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(20, 0), new go.Point(20, 40), new go.Point(50, 40)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
         color: "#50E2AD",
         dash: [4, 2],
-        toArrow: "Circle"
+        text: "(+) Cost Contribution",
+        type: "(+) Cost Contribution",
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        color: "#50E2AD",
+        dash: [4, 2],
+        toArrow: "Circle",
+        text: "(-) Cost Contribution",
+        type: "(-) Cost Contribution"
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        color: "#50E2AD",
+        dash: [4, 2],
+        text: "(+) Value Contribution",
+        type: "(+) Value Contribution",
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        color: "#50E2AD",
+        dash: [4, 2],
+        toArrow: "Circle",
+        text: "(-) Value Contribution",
+        type: "(-) Value Contribution"
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        color: "#50E2AD",
+        dash: [4, 2],
+        toArrow: "Circle",
+        text: "Exclusion",
+        type: "Exclusion"
     }
 ];
 
 export const paletteConfiguration = { 
     maxSelectionCount: 1, 
     allowZoom: false,
-    layout: $(
-        go.GridLayout,
+    layout: $(go.GridLayout,
         {
-            alignment: "Location",
-            cellSize: new go.Size(50, 50),
-            spacing: new go.Size(10, 20),
-            wrappingColumn: 2, // adjust as needed to fit the number of items in a row
+            alignment: go.GridLayout.Position,
+            cellSize: new go.Size(45, 50),
+            spacing: new go.Size(0, 0),
+            wrappingColumn: 100
         }
     )
 };

@@ -30,12 +30,13 @@ export const showSmallPorts = (node, show) => {
 export const createPaletteNodeTemplate = () => {
     return $(go.Node, "Vertical",
         { locationObjectName: "TB", locationSpot: go.Spot.Center },
-        $(go.Shape,
+        $(go.Shape, "RoundedRectangle",
             { 
-                width: 60, 
-                height: 60, 
+                desiredSize: new go.Size(60, 25),
                 fill: "white",
-                margin: new go.Margin(80, 0, 10, 0)
+                margin: new go.Margin(0, 0, 0, 0),
+                strokeDashArray: null,
+                parameter1: 100
             },
             new go.Binding("fill", "color"),
             new go.Binding("width", "width"),
@@ -44,7 +45,8 @@ export const createPaletteNodeTemplate = () => {
         $(go.TextBlock, 
             { 
                 name: "TB",
-                margin: new go.Margin(10, 0, 0, 0)
+                margin: new go.Margin(7, 0, 0, 0),
+                font: "9pt sans-serif",
             },
             new go.Binding("text", "text")
         )
@@ -53,15 +55,17 @@ export const createPaletteNodeTemplate = () => {
 
 export const createDiagramNodeTemplate = () => {
     return $(go.Node, "Auto",
-        { resizable: true, resizeObjectName: "PANEL" },
+        { resizable: true, resizeObjectName: "PANEL", toLinkable: false, fromLinkable: false },
         $(go.Shape, "RoundedRectangle",
             {
                 portId: "", // the default port: if no spot on link data, use closest side
                 fill: "white",  // default color
                 strokeWidth: 2,
-                width: 70,
-                height: 70,
-                name: "PANEL"
+                width: 110,
+                height: 60,
+                name: "PANEL",
+                parameter1: 100,
+                minSize: new go.Size(60, 30)
             },
             new go.Binding("fill", "color"),
             new go.Binding("width", "width"),
@@ -86,9 +90,9 @@ export const createDiagramNodeTemplate = () => {
                 },
             ),
             $("TreeExpanderButton", 
-                { alignment: go.Spot.TopLeft, alignmentFocus: go.Spot.Top },
+                { alignment: go.Spot.Left, alignmentFocus: go.Spot.Top },
                 { visible: true }
-            )
+            ),
         ),  // textblock.text = data.key
 
         // four small named ports, one on each side:
@@ -146,9 +150,11 @@ export const createDiagramLinkTemplate = () => {
                     stroke: "black",
                     margin: 2,
                     minSize: new go.Size(10, NaN),
-                    editable: true
+                    editable: true,
+                    isMultiline: false
                 },
-                new go.Binding("text").makeTwoWay()
+                new go.Binding("text").makeTwoWay(),
+                new go.Binding("editable", "type", type => type?.slice(0, 3) === "(+)" || type?.slice(0, 3) === "(-)"),
             )
         )
     );
@@ -172,7 +178,7 @@ export const createPaletteLinkTemplate = () => {
         $(go.Shape,  // the link path shape
             { 
                 isPanelMain: true, 
-                strokeWidth: 4,
+                strokeWidth: 2,
                 stroke: "red",
                 strokeDashArray: [0, 0],
                 
@@ -184,6 +190,16 @@ export const createPaletteLinkTemplate = () => {
         $(go.Shape,  // the arrowhead
             { toArrow: "Standard", stroke: null, scale: 2 },
             new go.Binding("toArrow", "toArrow"),
+        ),
+
+        $(go.TextBlock,
+            {
+                textAlign: "bottom",
+                stroke: "black",
+                font: "9pt sans-serif",
+                segmentOffset: new go.Point(26, 0),
+            },
+            new go.Binding("text").makeTwoWay()
         )
     );
 }
