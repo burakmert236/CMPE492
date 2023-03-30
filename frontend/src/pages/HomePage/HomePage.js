@@ -53,16 +53,98 @@ const HomePage = () => {
     
     }, [$, diagramObject]);
 
+    useEffect(() => {
+        if(!diagramObject) return;
+
+        diagramObject.addDiagramListener("ExternalObjectsDropped", function(e) {
+            const sel = e.diagram.selection;
+            if (sel.count === 1) {  // make sure only one object was dropped
+                const obj = sel.first();
+
+                if (obj instanceof go.Link) {  // make sure it's a link
+                    let newText = null;
+
+                    if(obj?.data?.type === "(+) Cost Contribution" || obj?.data?.type === "(+) Value Contribution")
+                        newText = "+1";
+
+                    if(obj?.data?.type === "(-) Cost Contribution" || obj?.data?.type === "(-) Value Contribution")
+                        newText = "-1";
+
+                    if(obj?.data?.type === "Precedence") newText = "Precedes";
+
+                    if(obj?.data?.type === "Exclusion") newText = "Excludes";
+
+                    const droppedPositionX = diagramObject?.lastInput?.documentPoint?.x;
+                    const droppedPositionY = diagramObject?.lastInput?.documentPoint?.y;
+
+                    diagramObject.model.setDataProperty(obj.data, "text", newText);
+                    diagramObject.model.setDataProperty(
+                        obj.data, 
+                        "points", 
+                        new go.List(/*go.Point*/).addAll([
+                            new go.Point(droppedPositionX - 60, droppedPositionY - 30), 
+                            new go.Point(droppedPositionX, droppedPositionY - 30), 
+                            new go.Point(droppedPositionX, droppedPositionY + 30), 
+                            new go.Point(droppedPositionX + 60, droppedPositionY + 30)
+                        ])
+                    );
+                }
+            }
+        });
+
+        diagramObject.addDiagramListener("TextEdited", function(e) {
+            const label = e.subject;
+            const newText = label.text;
+            let newValue = parseInt(newText);
+
+            const sel = e.diagram.selection;
+            const obj = sel.first();
+          
+            if (obj?.data?.type?.slice(0, 3) === "(+)") {
+                newValue = Math.abs(parseInt(newValue));
+
+                if(isNaN(newValue)) {
+                    // Revert to the previous text
+                    label.text = `+${label.part.data.value}`;
+                    diagramObject.commitTransaction();
+                    return;
+                }
+
+                label.part.data.value = parseInt(newValue);
+                label.text = `+${parseInt(newValue)}`;
+                diagramObject.commitTransaction();
+            } else if(obj?.data?.type?.slice(0, 3) === "(-)") {
+                newValue = Math.abs(parseInt(newValue));
+
+                if(isNaN(newValue)) {
+                    // Revert to the previous text
+                    label.text = `-${label.part.data.value}`;
+                    diagramObject.commitTransaction();
+                    return;
+                }
+
+                label.part.data.value = parseInt(newValue);
+                label.text = `-${parseInt(newValue)}`;
+                diagramObject.commitTransaction();
+            } else {
+                // Revert to the previous text
+                label.text = label.part.data.value;
+                diagramObject.commitTransaction();
+            }
+          });
+
+    }, [diagramObject])
+
     return (
         <div className="homepage-layout">
             
             <Navbar commandHandlerRef={commandHandlerRef}/>
 
-            <div className="homepage-main">
+            <div className="palette-container">
+                <Palette paletteRef={paletteRef}/>
+            </div>
 
-                <div className="palette-container">
-                    <Palette paletteRef={paletteRef}/>
-                </div>
+            <div className="homepage-main">
 
                 <Canvas diagramRef={diagramRef}/>
 
