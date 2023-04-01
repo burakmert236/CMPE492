@@ -54,12 +54,13 @@ export const createPaletteNodeTemplate = () => {
 };
 
 export const createDiagramNodeTemplate = () => {
-    return $(go.Node, "Spot",
-        { selectable: true, selectionAdornmentTemplate:
-            $(go.Adornment, "Auto",
-                $(go.Shape, { fill: null, stroke: "deepskyblue", strokeWidth: 1.5, strokeDashArray: [6, 3] }),
-                $(go.Placeholder)
-            )
+    return $(go.Node, "Auto",
+        { selectable: true, 
+            selectionAdornmentTemplate:
+                $(go.Adornment, "Auto",
+                    $(go.Shape, { fill: null, stroke: "deepskyblue", strokeWidth: 1.5, strokeDashArray: [6, 3] }),
+                    $(go.Placeholder)
+                )
         },  
         { locationSpot: go.Spot.Center },
         { resizable: true, resizeObjectName: "PANEL", toLinkable: false, fromLinkable: false },
@@ -67,14 +68,27 @@ export const createDiagramNodeTemplate = () => {
         $(go.Panel, "Auto",  
             { defaultAlignment: go.Spot.Center },
 
-            $(go.Shape, "RoundedRectangle",
+            $(go.Shape,
                 {
-                    portId: "", // the default port: if no spot on link data, use closest side
+                    geometryString: "F M0 0 Q7 -8 25 0 Q50 7 75 0 Q93 -8 100 0 Q122 35 100 70 Q93 77 75 70 Q50 63 25 70 Q7 77 0 70 Q-22 35 0 0z",
+                    name: "SHAPE", fill: "#ffffff", strokeWidth: 0,
+                    stroke: null,
+                    portId: "",  // this Shape is the Node's port, not the whole Node
+                    fromLinkable: true,
+                    toLinkable: true,
+                    cursor: "pointer",
+                    minSize: new go.Size(130, 50)
+                }
+            ),
+
+            $(go.Shape,
+                {
+                    geometryString: "F M0 0 Q7 -8 25 0 Q50 7 75 0 Q93 -8 100 0 Q122 35 100 70 Q93 77 75 70 Q50 63 25 70 Q7 77 0 70 Q-22 35 0 0z",
                     fill: "red",  // default color
                     strokeWidth: 2,
                     name: "PANEL",
                     parameter1: 100,
-                    minSize: new go.Size(110, 70)
+                    minSize: new go.Size(130, 50)
                 },
                 new go.Binding("fill", "color"),
             ),  // shape.fill = data.color
@@ -82,7 +96,7 @@ export const createDiagramNodeTemplate = () => {
             $(go.TextBlock,
                 { 
                     text: "Goal",
-                    font: "bold 12pt sans-serif",
+                    font: "bold 14pt sans-serif",
                     editable: true,
                     isMultiline: false,
                     maxSize: new go.Size(160, NaN),
@@ -90,32 +104,25 @@ export const createDiagramNodeTemplate = () => {
                 },
             ),
             $("TreeExpanderButton", 
-                { alignment: go.Spot.Left, alignmentFocus: go.Spot.Top },
-                { visible: true }
+                { 
+                    alignment: go.Spot.Left, 
+                    alignmentFocus: go.Spot.Left,
+                    visible: true,
+                    margin: new go.Margin(0, 0, 0, 10)
+                },
             ),
         ),  // textblock.text = data.key
-
-        // four small named ports, one on each side:
-        makePort("T", go.Spot.Top, false, true),
-        makePort("L", go.Spot.Left, true, true),
-        makePort("R", go.Spot.Right, true, true),
-        makePort("B", go.Spot.Bottom, true, false),
-
-        { // handle mouse enter/leave events to show/hide the ports
-            mouseEnter: (e, node) => showSmallPorts(node, true),
-            mouseLeave: (e, node) => showSmallPorts(node, false)
-        }
     );
 };
 
 export const createDiagramLinkTemplate = () => {
     return $(go.Link,  // the whole link panel
-        { selectable: true},
         { relinkableFrom: true, relinkableTo: true, reshapable: true },
         {
-            routing: go.Link.AvoidsNodes,
-            corner: 5,
+            corner: 10,
             toShortLength: 8,
+            curve: go.Link.Bezier,
+            adjusting: go.Link.Stretch,
         },
     
         new go.Binding("points").makeTwoWay(),
@@ -152,7 +159,7 @@ export const createDiagramLinkTemplate = () => {
             $(go.TextBlock,
                 {
                     textAlign: "center",
-                    font: "10pt helvetica, arial, sans-serif",
+                    font: "bold 13pt helvetica, arial, sans-serif",
                     stroke: "white",
                     margin: 2,
                     minSize: new go.Size(1, NaN),
@@ -162,7 +169,8 @@ export const createDiagramLinkTemplate = () => {
                 new go.Binding("text").makeTwoWay(),
                 new go.Binding("editable", "type", type => type?.slice(0, 3) === "(+)" || type?.slice(0, 3) === "(-)"),
                 new go.Binding("visible", "type", type => type !== "Refinement"),
-                new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "10pt helvetica, arial, sans-serif"),
+                new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 13pt helvetica, arial, sans-serif"),
+
             )
         )
     );
@@ -190,7 +198,6 @@ export const createPaletteLinkTemplate = () => {
                 strokeWidth: 3,
                 stroke: "red",
                 strokeDashArray: [0, 0],
-                
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),

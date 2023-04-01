@@ -2,6 +2,7 @@ import * as go from "gojs";
 const $ = go.GraphObject.make;
 
 export const diagramConfiguration = {
+    allowZoom: true,
     "initialContentAlignment": go.Spot.Center,
     'undoManager.isEnabled': true,
     "draggingTool.isGridSnapEnabled": true,
@@ -27,7 +28,7 @@ export const paletteNodeDataArray = [  // specify the contents of the Palette
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 22)]), 
         color: "black",
         text: "Refinement",
         type: "Refinement",
@@ -35,7 +36,7 @@ export const paletteLinkDataArray = [
         toArrow: "",
         fromShortLength: 8,
         toShortLength: 0,
-        segmentOffset: new go.Point(5, 21),
+        segmentOffset: new go.Point(5, 20)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
