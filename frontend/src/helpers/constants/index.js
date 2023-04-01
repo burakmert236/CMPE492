@@ -17,11 +17,7 @@ export const diagramConfiguration = {
     "relinkingTool.toHandleArchetype":
         $(go.Shape, "Diamond", { segmentIndex: -1, cursor: "pointer", desiredSize: new go.Size(8, 8), fill: "darkred", stroke: "tomato" }),
     "linkReshapingTool.handleArchetype":
-        $(go.Shape, "Diamond", { desiredSize: new go.Size(7, 7), fill: "lightblue", stroke: "deepskyblue" }),
-    "rotatingTool.handleAngle": 270,
-    "rotatingTool.handleDistance": 30,
-    "rotatingTool.snapAngleMultiple": 15,
-    "rotatingTool.snapAngleEpsilon": 15,
+        $(go.Shape, "Diamond", { desiredSize: new go.Size(2, 2), fill: "lightblue", stroke: "deepskyblue" }),
 };
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
@@ -31,58 +27,68 @@ export const paletteNodeDataArray = [  // specify the contents of the Palette
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 20)]), 
         color: "black",
         text: "Refinement",
         type: "Refinement",
-        toArrow: "Triangle"
+        fromArrow: "BackwardTriangle",
+        toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 21),
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "black",
         toArrow: "BackwardTriangle",
         text: "Precedence",
-        type: "Precedence"
+        type: "Precedence",
+        fromArrow: "",
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "#27ba84",
-        dash: [4, 2],
+        dash: [6, 3],
         text: "(+) Cost Contribution",
         type: "(+) Cost Contribution",
-        toArrow: "Triangle"
+        toArrow: "Triangle",
+        fromArrow: "",
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "rgb(33, 91, 166)",
-        dash: [4, 2],
+        dash: [6, 3],
         toArrow: "Triangle",
         text: "(-) Cost Contribution",
-        type: "(-) Cost Contribution"
+        type: "(-) Cost Contribution",
+        fromArrow: "",
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "#27ba84",
-        dash: [4, 2],
+        dash: [6, 3],
         toArrow: "Circle",
         text: "(+) Value Contribution",
         type: "(+) Value Contribution",
+        fromArrow: "",
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "rgb(33, 91, 166)",
-        dash: [4, 2],
+        dash: [6, 3],
         toArrow: "Circle",
         text: "(-) Value Contribution",
-        type: "(-) Value Contribution"
+        type: "(-) Value Contribution",
+        fromArrow: "",
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 20), new go.Point(65, 20)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "red",
-        dash: [4, 2],
+        dash: [6, 3],
         toArrow: "Triangle",
         text: "Exclusion",
-        type: "Exclusion"
+        type: "Exclusion",
+        fromArrow: "",
     }
 ];
 

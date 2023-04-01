@@ -82,10 +82,8 @@ const HomePage = () => {
                         obj.data, 
                         "points", 
                         new go.List(/*go.Point*/).addAll([
-                            new go.Point(droppedPositionX - 60, droppedPositionY - 30), 
-                            new go.Point(droppedPositionX, droppedPositionY - 30), 
-                            new go.Point(droppedPositionX, droppedPositionY + 30), 
-                            new go.Point(droppedPositionX + 60, droppedPositionY + 30)
+                            new go.Point(droppedPositionX - 70, droppedPositionY - 40), 
+                            new go.Point(droppedPositionX + 70, droppedPositionY + 40),
                         ])
                     );
                 }
@@ -99,6 +97,10 @@ const HomePage = () => {
 
             const sel = e.diagram.selection;
             const obj = sel.first();
+
+            if (obj instanceof go.Node) {
+                return;
+            }
           
             if (obj?.data?.type?.slice(0, 3) === "(+)") {
                 newValue = Math.abs(parseInt(newValue));

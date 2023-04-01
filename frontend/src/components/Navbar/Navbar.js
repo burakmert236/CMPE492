@@ -39,7 +39,7 @@ const Navbar = ({commandHandlerRef}) => {
                         }}
                     >
                         <Space>
-                            File
+                            FILE
                             <DownOutlined />
                         </Space>
                     </Dropdown>
