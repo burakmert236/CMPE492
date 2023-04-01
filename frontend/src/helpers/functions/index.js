@@ -30,9 +30,10 @@ export const showSmallPorts = (node, show) => {
 export const createPaletteNodeTemplate = () => {
     return $(go.Node, "Vertical",
         { locationObjectName: "TB", locationSpot: go.Spot.Center },
-        $(go.Shape, "RoundedRectangle",
+        $(go.Shape,
             { 
-                desiredSize: new go.Size(60, 25),
+                geometryString: "F M0 0 Q7 -8 25 0 Q50 7 75 0 Q93 -8 100 0 Q122 35 100 70 Q93 77 75 70 Q50 63 25 70 Q7 77 0 70 Q-22 35 0 0z",
+                desiredSize: new go.Size(65, 25),
                 margin: new go.Margin(0, 0, 0, 0),
                 strokeDashArray: null,
                 parameter1: 100,
