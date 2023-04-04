@@ -56,10 +56,19 @@ export const createPaletteNodeTemplate = () => {
 
 export const createDiagramNodeTemplate = () => {
     return $(go.Node, "Auto",
-        { selectable: true, 
+        { 
+            click: (e, node) => console.log("clickeddd nodeee", node),
+            selectable: true, 
             selectionAdornmentTemplate:
                 $(go.Adornment, "Auto",
-                    $(go.Shape, { fill: null, stroke: "deepskyblue", strokeWidth: 1.5, strokeDashArray: [6, 3] }),
+                    $(go.Shape, 
+                        { 
+                            fill: null, 
+                            stroke: "deepskyblue", 
+                            strokeWidth: 1.5, 
+                            strokeDashArray: [6, 3]
+                        }
+                    ),
                     $(go.Placeholder)
                 )
         },  
@@ -142,12 +151,16 @@ export const createDiagramLinkTemplate = () => {
     
         $(go.Shape,  // the arrowhead
             { toArrow: "Standard", stroke: null, scale: 2 },
-            new go.Binding("toArrow", "toArrow")
+            new go.Binding("toArrow", "toArrow"),
+            new go.Binding("stroke", "color"),
+            new go.Binding("fill", "color"),
         ),
 
         $(go.Shape,  // the arrowhead
             { fromArrow: "Standard", stroke: null, scale: 2 },
-            new go.Binding("fromArrow", "fromArrow")
+            new go.Binding("fromArrow", "fromArrow"),
+            new go.Binding("stroke", "color"),
+            new go.Binding("fill", "color"),
         ),
 
         $(go.Panel, "Auto",
@@ -205,13 +218,17 @@ export const createPaletteLinkTemplate = () => {
         ),
 
         $(go.Shape,  // the arrowhead
-            { toArrow: "Standard", stroke: null, scale: 2 },
+            { toArrow: "Standard", stroke: null, scale: 1.5 },
             new go.Binding("toArrow", "toArrow"),
+            new go.Binding("stroke", "color"),
+            new go.Binding("fill", "color"),
         ),
 
         $(go.Shape,  // the arrowhead
-            { fromArrow: "Standard", stroke: null, scale: 2 },
-            new go.Binding("fromArrow", "fromArrow")
+            { fromArrow: "Standard", stroke: null, scale: 1.5 },
+            new go.Binding("fromArrow", "fromArrow"),
+            new go.Binding("stroke", "color"),
+            new go.Binding("fill", "color"),
         ),
 
 
