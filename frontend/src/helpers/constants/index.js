@@ -57,6 +57,9 @@ export const paletteLinkDataArray = [
         type: "(+) Cost Contribution",
         fromArrow: "BackwardTriangle",
         toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 20)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
@@ -66,6 +69,9 @@ export const paletteLinkDataArray = [
         text: "(-) Cost Contribution",
         type: "(-) Cost Contribution",
         toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 20)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
@@ -75,6 +81,9 @@ export const paletteLinkDataArray = [
         text: "(+) Value Contribution",
         type: "(+) Value Contribution",
         toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 20)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
@@ -84,6 +93,9 @@ export const paletteLinkDataArray = [
         text: "(-) Value Contribution",
         type: "(-) Value Contribution",
         toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 20)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
@@ -93,6 +105,9 @@ export const paletteLinkDataArray = [
         text: "Exclusion",
         type: "Exclusion",
         toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 20)
     }
 ];
 
