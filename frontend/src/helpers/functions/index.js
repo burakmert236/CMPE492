@@ -54,9 +54,13 @@ export const createPaletteNodeTemplate = () => {
     );
 };
 
-export const createDiagramNodeTemplate = () => {
+export const createDiagramNodeTemplate = (setSelectedNode) => {
     return $(go.Node, "Auto",
-        { selectable: true, 
+        {   
+            click:(e,node) => {
+                setSelectedNode(node);
+            },
+            selectable: true, 
             selectionAdornmentTemplate:
                 $(go.Adornment, "Auto",
                     $(go.Shape, { fill: null, stroke: "deepskyblue", strokeWidth: 1.5, strokeDashArray: [6, 3] }),
@@ -96,12 +100,14 @@ export const createDiagramNodeTemplate = () => {
 
             $(go.TextBlock,
                 { 
+                    name: "TEXT",
                     text: "Goal",
                     font: "bold 14pt sans-serif",
                     editable: true,
-                    isMultiline: false,
+                    isMultiline: true,
                     maxSize: new go.Size(160, NaN),
                     wrap: go.TextBlock.WrapFit,
+                    textAlign: "center",
                 },
             ),
             $("TreeExpanderButton", 

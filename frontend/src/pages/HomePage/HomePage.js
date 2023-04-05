@@ -10,6 +10,7 @@ import { diagramConfiguration, paletteNodeDataArray, paletteLinkDataArray, palet
 import { createDiagramNodeTemplate, createDiagramLinkTemplate, createPaletteLinkTemplate, createPaletteNodeTemplate } from "../../helpers/functions";
 
 import "./HomePage.scss";
+import Dashboard from "../../components/Dashboard/Dashboard";
 
 const HomePage = () => {
     const $ = go.GraphObject.make;
@@ -17,7 +18,7 @@ const HomePage = () => {
     const diagramRef = useRef(null);
     const paletteRef = useRef(null);
     const commandHandlerRef = useRef(null);
-
+    const [selectedNode, setSelectedNode] = useState(null);
     const [diagramObject, setDiagramObject] = useState();
 
     useEffect(() => {
@@ -29,10 +30,10 @@ const HomePage = () => {
         commandHandlerRef.current = diagram.commandHandler;
 
 		// initial diagram node temaplate
-        diagram.nodeTemplate = createDiagramNodeTemplate();
+        diagram.nodeTemplate = createDiagramNodeTemplate(setSelectedNode);
 
 		// initial diagram link template
-        diagram.linkTemplate = createDiagramLinkTemplate();
+        diagram.linkTemplate = createDiagramLinkTemplate(setSelectedNode);
             
         diagram.model = new go.GraphLinksModel();
 
@@ -148,7 +149,11 @@ const HomePage = () => {
 
             <div className="homepage-main">
 
-                <Canvas diagramRef={diagramRef}/>
+                <div className="homepage-dashboard">
+                    <Dashboard selectedNode={selectedNode} />
+                </div>
+
+                <Canvas diagramRef={diagramRef} />
 
             </div>
 
