@@ -28,7 +28,7 @@ export const paletteNodeDataArray = [  // specify the contents of the Palette
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 22)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
         color: "black",
         text: "Refinement",
         type: "Refinement",
@@ -36,7 +36,7 @@ export const paletteLinkDataArray = [
         toArrow: "",
         fromShortLength: 8,
         toShortLength: 0,
-        segmentOffset: new go.Point(5, 20)
+        segmentOffset: new go.Point(5, 22)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
@@ -45,6 +45,9 @@ export const paletteLinkDataArray = [
         text: "Precedence",
         type: "Precedence",
         toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 20)
     },
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
