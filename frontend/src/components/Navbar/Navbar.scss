@@ -47,12 +47,31 @@
             flex-direction: row;
             align-items: center;
             gap: 15px;
+            cursor: pointer;
+            margin-top: -10px;
 
             .undo, .redo {
-                height: 35px;
-                width: 35px;
+                height: 27px;
+                width: 27px;
                 background-color: #F2B84B;
                 border-radius: 5px;
+
+                .label {
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                }
+            }
+
+            .undo {
+                .label {
+                    margin-top: 10px;
+                }
+            }
+
+            .redo {
+                .label {
+                    margin-top: 2px;
+                }
             }
         }
     }
@@ -90,7 +109,7 @@
     margin-top: 5px !important;
 }
 
-.triangle, .triangle:before, .triangle:after { width: 1.5em; height: 1.5em; }
+.triangle, .triangle:before, .triangle:after { width: 1.1em; height: 1.1em; }
 .triangle {
 	overflow: hidden;
 	position: relative;
@@ -117,11 +136,11 @@
 }
 
 .left {
-    margin: 12px 0 0 7px;
+    margin: 9px 0 0 7px;
     transform: translateY(0%) rotate(0deg) skewY(30deg) scaleX(.866);
 }
 
 .right {
-    margin: 0px 0 0 3px;
+    margin: 1px 0 0 3px;
     transform: translateY(0%) rotate(180deg) skewY(30deg) scaleX(.866);
 }

@@ -18,7 +18,8 @@ import {
     createDiagramLinkTemplate, 
     createPaletteLinkTemplate, 
     createPaletteNodeTemplate,
-    hasCycle
+    detectCycleForSpecificLinkType,
+    detectCycleAndMarkNodes
 } from "../../helpers/functions";
 
 import "./HomePage.scss";
@@ -81,18 +82,25 @@ const HomePage = () => {
         if(!diagramObject) return;
 
         const cycleDetectFunction = (e) => {
-            var link = e.subject;
+            const link = e.subject;
+            const cycleTypes = ["Refinement", "Precedence"];
 
-            if (hasCycle(diagramObject, link, "Refinement")) {
-                // if cycle found, remove link and display error message
-                link.remove();
-                alert("Cannot create cycle with refinement links!");
+            diagramObject.startTransaction('Check for cycle');
+
+            for(let i = 0; i<cycleTypes?.length; i++) {
+                if (detectCycleForSpecificLinkType(diagramObject, cycleTypes[i])) {
+                    // if cycle found, remove link and display error message
+                    alert(`Cannot create cycle with ${cycleTypes[i]} links!`);
+                    diagramObject.remove(link);
+                    diagramObject.commitTransaction('Check for cycle');
+                    break;
+                }
             }
         }
 
         diagramObject.addDiagramListener("LinkDrawn", cycleDetectFunction);
         diagramObject.addDiagramListener("LinkRelinked", cycleDetectFunction);
-    }, [diagramObject])
+    }, [diagramObject]);
 
     useEffect(() => {
         if(!diagramObject) return;
@@ -134,6 +142,11 @@ const HomePage = () => {
 
             const sel = e.diagram.selection;
             const obj = sel.first();
+
+            if(obj instanceof go.Node) {
+                diagramObject.commitTransaction();
+                return;
+            }
           
             if (obj?.data?.type === "C+" || obj?.data?.type === "V+") {
                 if(newText?.slice(0, 1) === "C" || newText?.slice(0, 1) === "V") newText = newText.slice(1);

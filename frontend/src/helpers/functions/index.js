@@ -40,7 +40,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                         { 
                             fill: null, 
                             stroke: "deepskyblue", 
-                            strokeWidth: 1.5, 
+                            strokeWidth: 1, 
                             strokeDashArray: [6, 3]
                         }
                     ),
@@ -52,7 +52,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
 
         $(go.Shape, "Terminator",
             {
-                name: "SHAPE", fill: "#000", strokeWidth: 2,
+                name: "SHAPE", fill: "#000", strokeWidth: 1,
                 stroke: "#000",
                 portId: "",  // this Shape is the Node's port, not the whole Node
                 fromLinkable: true,
@@ -69,7 +69,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
             $(go.Shape, "Terminator",
                 {
                     fill: "red",  // default color
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     name: "PANEL",
                     minSize: new go.Size(120, 50),
                 },
@@ -221,59 +221,43 @@ export const createPaletteLinkTemplate = () => {
     );
 }
 
-export const hasCycle = (diagram, link, linkType) => {
-    // Check if the link is of the specific type you want to check for cycles in
-    if (link?.data?.type !== linkType) {
-        return false;
-    }
-
-    var stack = new go.List(/*go.Node*/);
-    var coll = new go.List(/*go.List*/);
-
-    function find(source, end) {
-        source?.findNodesOutOf().each(n => {
-            if (n === source) return;  // ignore reflexive links
-            if (n === end) {  // success
-                var path = stack.copy();
-                path.add(end);  // finish the path at the end node
-                coll.add(path);  // remember the whole path
-            } else if (!stack.has(n)) {  // inefficient way to check having visited
-                stack.add(n);  // remember that we've been here for this path (but not forever)
-                find(n, end);
-                stack.removeAt(stack.count - 1);
-            }  // else might be a cycle
-        });
-    };
-
-    stack.add(link?.fromNode);  // start the path at the begin node
-    find(link?.fromNode, link?.toNode);
-
-    // Return a string representation of a path for humans to read.
-    function pathToString(path) {
-        var s = path.length + ": ";
-        for (var i = 0; i < path.length; i++) {
-          if (i > 0) s += " -- ";
-          s += path.get(i).data.key;
+export const hasCycle = (node, visited, stack, desiredType) => {
+    visited[node?.key] = true;
+    stack[node?.key] = true;
+  
+    const iterator = node?.findNodesOutOf();
+    while (iterator?.next()) {
+        const connectedNode = iterator.value;
+        const link = node?.findLinksTo(connectedNode)?.first();
+    
+        if (link?.data?.type === desiredType) {
+            if (!visited[connectedNode.key]) {
+                if(hasCycle(connectedNode, visited, stack, desiredType)) {
+                    return true
+                }
+            } else if (stack[connectedNode.key]) {
+                return true;
+            }
         }
-        return s;
     }
+  
+    stack[node?.key] = false;
+    return false;
+}
 
-    coll.each(p => {
-        console.log(pathToString(p));
-    });
-
-    // Find all paths from the link's "from" node to its "to" node
-    // var paths = diagram.findPathsBetween(link.fromNode, link.toNode);
-
-    // console.log(paths)
-
-    // // Filter out paths that do not contain the link
-    // paths = paths.filter(function(path) {
-    //     return path.contains(link);
-    // });
-
-    // // Check if there are any cycles in the remaining paths
-    // return paths.any(function(path) {
-    //     return path.count > 1;
-    // });
+export const detectCycleForSpecificLinkType = (diagram, desiredType) => {
+    const visited = {};
+    const stack = {};
+  
+    const nodes = diagram.nodes;
+    while (nodes.next()) {
+        const node = nodes.value;
+        if (!visited[node.key]) {
+            if (hasCycle(node, visited, stack, desiredType)) {
+                return true;
+            }
+        }
+    }
+  
+    return false;
 }

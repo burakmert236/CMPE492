@@ -39,24 +39,26 @@ const Navbar = ({commandHandlerRef}) => {
                         }}
                     >
                         <Space>
-                            FILE
+                            File
                             <DownOutlined />
                         </Space>
                     </Dropdown>
                 </div>
 
-                <div className="navbar-button">OPTIONS</div>
+                <div className="navbar-button">Options</div>
 
-                <div className="navbar-button">HELP</div>
+                <div className="navbar-button">Help</div>
             </div>
 
             <div className="right-navbar">
                 <div className="redo-undo">
                     <div className="undo" onClick={() => handleUndo()}>
                         <div className="triangle right"></div>
+                        <div className="label">Undo</div>
                     </div>
                     <div className="redo" onClick={() => handleRedo()}>
                         <div className="triangle left"></div>
+                        <div className="label">Redo</div>
                     </div>
                 </div>
 

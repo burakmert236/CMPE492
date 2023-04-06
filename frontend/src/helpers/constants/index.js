@@ -28,7 +28,7 @@ export const paletteNodeDataArray = [  // specify the contents of the Palette
 export const paletteLinkDataArray = [
     // the Palette also has a disconnected Link, which the user can drag-and-drop
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "black",
         text: "Refinement",
         type: "Refinement",
@@ -39,7 +39,7 @@ export const paletteLinkDataArray = [
         segmentOffset: new go.Point(5, 22)
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "black",
         fromArrow: "Backward",
         text: "Precedence",
@@ -50,10 +50,10 @@ export const paletteLinkDataArray = [
         segmentOffset: new go.Point(5, 20)
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "#27ba84",
         dash: [2, 2],
-        text: "(+) Cost Contribution",
+        text: "Positive Cost Contr.",
         type: "C+",
         fromArrow: "BackwardTriangle",
         toArrow: "",
@@ -62,11 +62,11 @@ export const paletteLinkDataArray = [
         segmentOffset: new go.Point(5, 20)
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "rgb(33, 91, 166)",
         dash: [2, 2],
         fromArrow: "BackwardTriangle",
-        text: "(-) Cost Contribution",
+        text: "Negative Cost Contr.",
         type: "C-",
         toArrow: "",
         fromShortLength: 8,
@@ -74,11 +74,11 @@ export const paletteLinkDataArray = [
         segmentOffset: new go.Point(5, 20)
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "#27ba84",
         dash: [6, 3],
         fromArrow: "BackwardBoomerang",
-        text: "(+) Value Contribution",
+        text: "Positive Value Contr.",
         type: "V+",
         toArrow: "",
         fromShortLength: 8,
@@ -86,11 +86,11 @@ export const paletteLinkDataArray = [
         segmentOffset: new go.Point(5, 20)
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "rgb(33, 91, 166)",
         dash: [6, 3],
         fromArrow: "BackwardBoomerang",
-        text: "(-) Value Contribution",
+        text: "Negative Value Contr.",
         type: "V-",
         toArrow: "",
         fromShortLength: 8,
@@ -98,7 +98,7 @@ export const paletteLinkDataArray = [
         segmentOffset: new go.Point(5, 20)
     },
     { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(65, 25)]), 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "red",
         dash: [6, 3],
         fromArrow: "BackwardTriangle",
