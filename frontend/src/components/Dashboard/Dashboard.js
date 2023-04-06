@@ -3,7 +3,7 @@ import { Button, Input, InputNumber, Select, Space } from "antd";
 import "./Dashboard.scss";
 const { TextArea } = Input;
 
-const Dashboard = ({ selectedNode }) => {
+const Dashboard = ({ selectedNode, diagram }) => {
 
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
@@ -33,8 +33,9 @@ const Dashboard = ({ selectedNode }) => {
           <div>
             Text: 
             <TextArea placeholder={text} rows={2} value={text} onChange={(e) => {
-              setText(e.target.value)
-              selectedNode.findObject("TEXT").text = e.target.value
+              setText(e.target.value);
+              selectedNode.findObject("TEXT").text = e.target.value;
+              diagram.commitTransaction("text-edit");
             }}
             />
           </div>
@@ -42,7 +43,8 @@ const Dashboard = ({ selectedNode }) => {
             Cost: &nbsp;&nbsp;&nbsp;
             <InputNumber placeholder={"Enter a cost"} value={cost} onChange={(e) => {
               setCost(e)
-              selectedNode.findObject("TEXT").cost = e
+              selectedNode.findObject("TEXT").cost = e;
+              diagram.commitTransaction("text-edit");
             }}
             style={{width: "110px"}}
             />
@@ -51,7 +53,8 @@ const Dashboard = ({ selectedNode }) => {
             Value: &nbsp;
             <InputNumber placeholder={"Enter a value"} value={value} onChange={(e) => {
               setValue(e)
-              selectedNode.findObject("TEXT").value = e 
+              selectedNode.findObject("TEXT").value = e ;
+              diagram.commitTransaction("text-edit");
             }}
             style={{width: "110px"}}
             />

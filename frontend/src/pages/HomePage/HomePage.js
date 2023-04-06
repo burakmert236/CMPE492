@@ -6,8 +6,20 @@ import Navbar from "../../components/Navbar/Navbar";
 import Palette from "../../components/Palette/Palette";
 import Canvas from "../../components/Canvas/Canvas";
 
-import { diagramConfiguration, paletteNodeDataArray, paletteLinkDataArray, paletteConfiguration } from "../../helpers/constants";
-import { createDiagramNodeTemplate, createDiagramLinkTemplate, createPaletteLinkTemplate, createPaletteNodeTemplate } from "../../helpers/functions";
+import { 
+    diagramConfiguration, 
+    paletteNodeDataArray, 
+    paletteLinkDataArray, 
+    paletteConfiguration 
+} from "../../helpers/constants";
+
+import { 
+    createDiagramNodeTemplate, 
+    createDiagramLinkTemplate, 
+    createPaletteLinkTemplate, 
+    createPaletteNodeTemplate,
+    hasCycle
+} from "../../helpers/functions";
 
 import "./HomePage.scss";
 import Dashboard from "../../components/Dashboard/Dashboard";
@@ -22,6 +34,17 @@ const HomePage = () => {
     const [diagramObject, setDiagramObject] = useState();
 
     useEffect(() => {
+        // create terminator shape
+        go.Shape.defineFigureGenerator("Terminator", function(shape, w, h) {
+            var geo = new go.Geometry();
+            var fig = new go.PathFigure(.25 * w, 0, true);
+            geo.add(fig);
+          
+            fig.add(new go.PathSegment(go.PathSegment.Arc, 270, 180, .75 * w, 0.5 * h, .25 * w, .5 * h));
+            fig.add(new go.PathSegment(go.PathSegment.Arc, 90, 180, .25 * w, 0.5 * h, .25 * w, .5 * h));
+            return geo;
+        });
+        
 		// initialize diagram with some configuration
         const diagram = go.GraphObject.make(go.Diagram, diagramRef.current, diagramConfiguration);
             
@@ -57,6 +80,23 @@ const HomePage = () => {
     useEffect(() => {
         if(!diagramObject) return;
 
+        const cycleDetectFunction = (e) => {
+            var link = e.subject;
+
+            if (hasCycle(diagramObject, link, "Refinement")) {
+                // if cycle found, remove link and display error message
+                link.remove();
+                alert("Cannot create cycle with refinement links!");
+            }
+        }
+
+        diagramObject.addDiagramListener("LinkDrawn", cycleDetectFunction);
+        diagramObject.addDiagramListener("LinkRelinked", cycleDetectFunction);
+    }, [diagramObject])
+
+    useEffect(() => {
+        if(!diagramObject) return;
+
         diagramObject.addDiagramListener("ExternalObjectsDropped", function(e) {
             const sel = e.diagram.selection;
             if (sel.count === 1) {  // make sure only one object was dropped
@@ -65,11 +105,8 @@ const HomePage = () => {
                 if (obj instanceof go.Link) {  // make sure it's a link
                     let newText = null;
 
-                    if(obj?.data?.type === "(+) Cost Contribution" || obj?.data?.type === "(+) Value Contribution")
-                        newText = "+1";
-
-                    if(obj?.data?.type === "(-) Cost Contribution" || obj?.data?.type === "(-) Value Contribution")
-                        newText = "-1";
+                    if(obj?.data?.type === "C+" || obj?.data?.type === "C-" || obj?.data?.type === "V+" || obj?.data?.type === "V-")
+                        newText = obj?.data?.type;
 
                     if(obj?.data?.type === "Precedence") newText = "Precedes";
 
@@ -93,41 +130,40 @@ const HomePage = () => {
 
         diagramObject.addDiagramListener("TextEdited", function(e) {
             const label = e.subject;
-            const newText = label.text;
-            let newValue = parseInt(newText);
+            let newText = label.text;
 
             const sel = e.diagram.selection;
             const obj = sel.first();
-
-            if (obj instanceof go.Node) {
-                return;
-            }
           
-            if (obj?.data?.type?.slice(0, 3) === "(+)") {
-                newValue = Math.abs(parseInt(newValue));
+            if (obj?.data?.type === "C+" || obj?.data?.type === "V+") {
+                if(newText?.slice(0, 1) === "C" || newText?.slice(0, 1) === "V") newText = newText.slice(1);
+
+                let newValue = Math.abs(parseInt(newText));
 
                 if(isNaN(newValue)) {
                     // Revert to the previous text
-                    label.text = `+${label.part.data.value}`;
+                    label.text = `${obj?.data?.type}${label.part.data.value}`;
                     diagramObject.commitTransaction();
                     return;
                 }
 
                 label.part.data.value = parseInt(newValue);
-                label.text = `+${parseInt(newValue)}`;
+                label.text = `${obj?.data?.type}${parseInt(newValue)}`;
                 diagramObject.commitTransaction();
-            } else if(obj?.data?.type?.slice(0, 3) === "(-)") {
-                newValue = Math.abs(parseInt(newValue));
+            } else if (obj?.data?.type === "C-" || obj?.data?.type === "V-") {
+                if(newText?.slice(0, 1) === "C" || newText?.slice(0, 1) === "V") newText = newText.slice(1);
+
+                let newValue = Math.abs(parseInt(newText));
 
                 if(isNaN(newValue)) {
                     // Revert to the previous text
-                    label.text = `-${label.part.data.value}`;
+                    label.text = `${obj?.data?.type}${label.part.data.value}`;
                     diagramObject.commitTransaction();
                     return;
                 }
 
                 label.part.data.value = parseInt(newValue);
-                label.text = `-${parseInt(newValue)}`;
+                label.text = `${obj?.data?.type}${parseInt(newValue)}`;
                 diagramObject.commitTransaction();
             } else {
                 // Revert to the previous text
@@ -150,7 +186,7 @@ const HomePage = () => {
             <div className="homepage-main">
 
                 <div className="homepage-dashboard">
-                    <Dashboard selectedNode={selectedNode} />
+                    <Dashboard selectedNode={selectedNode} diagram={diagramObject} />
                 </div>
 
                 <Canvas diagramRef={diagramRef} />

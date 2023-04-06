@@ -1,38 +1,11 @@
 import * as go from "gojs";
 const $ = go.GraphObject.make;
 
-export const makePort = (name, spot, output, input) => {
-    const $ = go.GraphObject.make;
-    // the port is basically just a small transparent circle
-    return $(go.Shape, "Circle",
-        {
-            fill: null,  // not seen, by default; set to a translucent gray by showSmallPorts, defined below
-            stroke: null,
-            desiredSize: new go.Size(7, 7),
-            alignment: spot,  // align the port on the main Shape
-            alignmentFocus: spot,  // just inside the Shape
-            portId: name,  // declare this object to be a "port"
-            fromSpot: spot, toSpot: spot,  // declare where links may connect at this port
-            fromLinkable: output, toLinkable: input,  // declare whether the user may draw links to/from here
-            cursor: "pointer"  // show a different cursor to indicate potential link point
-        }
-    );
-};
-
-export const showSmallPorts = (node, show) => {
-    node.ports.each(port => {
-        if (port.portId !== "") {  // don't change the default port, which is the big shape
-            port.fill = show ? "rgba(0,0,0,.2)" : null;
-        }
-    });
-};
-
 export const createPaletteNodeTemplate = () => {
     return $(go.Node, "Vertical",
         { locationObjectName: "TB", locationSpot: go.Spot.Center },
-        $(go.Shape,
+        $(go.Shape, "Terminator",
             { 
-                geometryString: "F M0 0 Q7 -8 25 0 Q50 7 75 0 Q93 -8 100 0 Q122 35 100 70 Q93 77 75 70 Q50 63 25 70 Q7 77 0 70 Q-22 35 0 0z",
                 desiredSize: new go.Size(65, 25),
                 margin: new go.Margin(0, 0, 0, 0),
                 strokeDashArray: null,
@@ -77,30 +50,28 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
         { locationSpot: go.Spot.Center },
         { resizable: true, resizeObjectName: "PANEL", toLinkable: false, fromLinkable: false },
 
+        $(go.Shape, "Terminator",
+            {
+                name: "SHAPE", fill: "#000", strokeWidth: 2,
+                stroke: "#000",
+                portId: "",  // this Shape is the Node's port, not the whole Node
+                fromLinkable: true,
+                toLinkable: true,
+                cursor: "pointer",
+                minSize: new go.Size(120, 50),
+            },
+            new go.Binding("fill", "color"),
+        ),
+
         $(go.Panel, "Auto",  
             { defaultAlignment: go.Spot.Center },
 
-            $(go.Shape,
+            $(go.Shape, "Terminator",
                 {
-                    geometryString: "F M0 0 Q7 -8 25 0 Q50 7 75 0 Q93 -8 100 0 Q122 35 100 70 Q93 77 75 70 Q50 63 25 70 Q7 77 0 70 Q-22 35 0 0z",
-                    name: "SHAPE", fill: "#ffffff", strokeWidth: 0,
-                    stroke: null,
-                    portId: "",  // this Shape is the Node's port, not the whole Node
-                    fromLinkable: true,
-                    toLinkable: true,
-                    cursor: "pointer",
-                    minSize: new go.Size(130, 50)
-                }
-            ),
-
-            $(go.Shape,
-                {
-                    geometryString: "F M0 0 Q7 -8 25 0 Q50 7 75 0 Q93 -8 100 0 Q122 35 100 70 Q93 77 75 70 Q50 63 25 70 Q7 77 0 70 Q-22 35 0 0z",
                     fill: "red",  // default color
                     strokeWidth: 2,
                     name: "PANEL",
-                    parameter1: 100,
-                    minSize: new go.Size(130, 50)
+                    minSize: new go.Size(120, 50),
                 },
                 new go.Binding("fill", "color"),
             ),  // shape.fill = data.color
@@ -115,6 +86,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                     maxSize: new go.Size(160, NaN),
                     wrap: go.TextBlock.WrapFit,
                     textAlign: "center",
+                    margin: 15
                 },
             ),
             $("TreeExpanderButton", 
@@ -146,7 +118,7 @@ export const createDiagramLinkTemplate = () => {
         $(go.Shape,  // the link path shape
             { 
                 isPanelMain: true, 
-                strokeWidth: 6, 
+                strokeWidth: 3, 
                 strokeDashArray: [0, 0]
             },
             new go.Binding("stroke", "color"),
@@ -177,7 +149,7 @@ export const createDiagramLinkTemplate = () => {
             $(go.TextBlock,
                 {
                     textAlign: "center",
-                    font: "bold 13pt helvetica, arial, sans-serif",
+                    font: "bold 10pt helvetica, arial, sans-serif",
                     stroke: "white",
                     margin: 2,
                     minSize: new go.Size(1, NaN),
@@ -185,9 +157,9 @@ export const createDiagramLinkTemplate = () => {
                     isMultiline: false,
                 },
                 new go.Binding("text").makeTwoWay(),
-                new go.Binding("editable", "type", type => type?.slice(0, 3) === "(+)" || type?.slice(0, 3) === "(-)"),
+                new go.Binding("editable", "type", type => ["C+", "C-", "V+", "V-"].includes(type?.slice(0, 2))),
                 new go.Binding("visible", "type", type => type !== "Refinement"),
-                new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 13pt helvetica, arial, sans-serif"),
+                new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 10pt helvetica, arial, sans-serif"),
 
             )
         )
@@ -247,4 +219,61 @@ export const createPaletteLinkTemplate = () => {
             new go.Binding("segmentOffset").makeTwoWay()
         )
     );
+}
+
+export const hasCycle = (diagram, link, linkType) => {
+    // Check if the link is of the specific type you want to check for cycles in
+    if (link?.data?.type !== linkType) {
+        return false;
+    }
+
+    var stack = new go.List(/*go.Node*/);
+    var coll = new go.List(/*go.List*/);
+
+    function find(source, end) {
+        source?.findNodesOutOf().each(n => {
+            if (n === source) return;  // ignore reflexive links
+            if (n === end) {  // success
+                var path = stack.copy();
+                path.add(end);  // finish the path at the end node
+                coll.add(path);  // remember the whole path
+            } else if (!stack.has(n)) {  // inefficient way to check having visited
+                stack.add(n);  // remember that we've been here for this path (but not forever)
+                find(n, end);
+                stack.removeAt(stack.count - 1);
+            }  // else might be a cycle
+        });
+    };
+
+    stack.add(link?.fromNode);  // start the path at the begin node
+    find(link?.fromNode, link?.toNode);
+
+    // Return a string representation of a path for humans to read.
+    function pathToString(path) {
+        var s = path.length + ": ";
+        for (var i = 0; i < path.length; i++) {
+          if (i > 0) s += " -- ";
+          s += path.get(i).data.key;
+        }
+        return s;
+    }
+
+    coll.each(p => {
+        console.log(pathToString(p));
+    });
+
+    // Find all paths from the link's "from" node to its "to" node
+    // var paths = diagram.findPathsBetween(link.fromNode, link.toNode);
+
+    // console.log(paths)
+
+    // // Filter out paths that do not contain the link
+    // paths = paths.filter(function(path) {
+    //     return path.contains(link);
+    // });
+
+    // // Check if there are any cycles in the remaining paths
+    // return paths.any(function(path) {
+    //     return path.count > 1;
+    // });
 }
