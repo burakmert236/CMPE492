@@ -1,19 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, InputNumber, Select, Space } from "antd";
+import { Button, Input, InputNumber, Space } from "antd";
 import "./Dashboard.scss";
+import { v4 } from 'uuid'
 const { TextArea } = Input;
 
 const Dashboard = ({ selectedNode }) => {
-
+  console.log(selectedNode?.findObject("TEXT")?.attributes);
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
   const [cost, setCost] = useState(null); 
   const [attributes, setAttributes] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [attrKey, setAttrKey] = useState('');
+  const [attrValue, setAttrValue] = useState('');
  // const [option, setOption] = useState();
 
   const toggleInput = () => {
     setIsOpen(!isOpen);
+    setAttrKey("");
+    setAttrValue("");
+  };
+
+  const handleAttrKeyChange = (e) => {
+    setAttrKey(e.target.value);
+  };
+  
+  const handleAttrValueChange = (e) => {
+    setAttrValue(e.target.value);
+  };
+
+  const submitAttribute = (key, value, type) => {
+    if (!selectedNode.findObject("TEXT").attributes)
+      selectedNode.findObject("TEXT").attribute = []
+    selectedNode?.findObject("TEXT")?.attributes?.push({key:value});
+    setAttributes(a => [...(a || []), {key: key, value: value, type: type}]) 
+    setAttrKey('');
+    setAttrValue('');
   };
 
 
@@ -28,9 +50,9 @@ const Dashboard = ({ selectedNode }) => {
   return (
     <div>
       {selectedNode ? (
-        <div>
-          <h3>Node Properties</h3>
-          <div>
+        <div className="dashboard-container" >
+          <h3 style={{marginLeft: "20px"}}> Node Properties </h3>
+          <div style={{marginLeft: "20px"}}>
             Text: 
             <TextArea placeholder={text} rows={2} value={text} onChange={(e) => {
               setText(e.target.value)
@@ -38,7 +60,7 @@ const Dashboard = ({ selectedNode }) => {
             }}
             />
           </div>
-          <div>
+          <div style={{marginLeft: "20px"}}>
             Cost: &nbsp;&nbsp;&nbsp;
             <InputNumber placeholder={"Enter a cost"} value={cost} onChange={(e) => {
               setCost(e)
@@ -47,7 +69,7 @@ const Dashboard = ({ selectedNode }) => {
             style={{width: "110px"}}
             />
           </div>
-          <div>
+          <div style={{marginLeft: "20px"}}>
             Value: &nbsp;
             <InputNumber placeholder={"Enter a value"} value={value} onChange={(e) => {
               setValue(e)
@@ -56,24 +78,32 @@ const Dashboard = ({ selectedNode }) => {
             style={{width: "110px"}}
             />
           </div>
-          
-          {attributes?.map(attr => (
-            <div>
+          <div>
+          {attributes?.map((attr) => (
+            <div  key={v4()} style={{marginLeft: "20px"}}>
+            {attr.key} : { attr.value }
             </div>
           ))}
+          </div>
 
           {isOpen && (
-            <Space.Compact>
-             
-              <Input />
-              <Button>Submit</Button>
+            <>
+            &nbsp;&nbsp;&nbsp;&nbsp; Define new property
+            <Space.Compact style={{marginLeft: "20px", marginTop: "2%"}}>
+              <Input value={attrKey} placeholder="Name" onChange={handleAttrKeyChange} />
+              <Input value={attrValue} placeholder="Value" onChange={handleAttrValueChange} />
+              <Button onClick={() => submitAttribute(attrKey, attrValue, "int")}>Submit</Button>
             </Space.Compact>
+            <Button className="cancel-button" style={{marginLeft: "75%", marginTop: "2%"}} onClick={(e) => toggleInput()}>
+              Cancel
+            </Button></>
           )}
-
-          <Button onClick={(e) => toggleInput()}>
+          
+          { !isOpen && (
+          <Button className="submit-button" style={{marginLeft: "65%", marginTop: "20%"}} onClick={(e) => toggleInput()}>
             Add Attribute
           </Button>
-
+          )}
 
         </div>
       ) : (
