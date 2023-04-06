@@ -31,8 +31,8 @@ const Dashboard = ({ selectedNode }) => {
 
   const submitAttribute = (key, value, type) => {
     if (!selectedNode.findObject("TEXT").attributes)
-      selectedNode.findObject("TEXT").attribute = []
-    selectedNode?.findObject("TEXT")?.attributes?.push({key:value});
+      selectedNode.findObject("TEXT").attributes = []
+    selectedNode?.findObject("TEXT")?.attributes?.push({key: key, value: value, type: type});
     setAttributes(a => [...(a || []), {key: key, value: value, type: type}]) 
     setAttrKey('');
     setAttrValue('');
@@ -75,13 +75,13 @@ const Dashboard = ({ selectedNode }) => {
               setValue(e)
               selectedNode.findObject("TEXT").value = e 
             }}
-            style={{width: "110px"}}
+            
             />
           </div>
           <div>
           {attributes?.map((attr) => (
             <div  key={v4()} style={{marginLeft: "20px"}}>
-            {attr.key} : { attr.value }
+              {attr.key} :  &nbsp;&nbsp;&nbsp;&nbsp; <Input value={attrValue} placeholder={ attr.value } onChange={handleAttrValueChange} style={{width: "110px"}} />
             </div>
           ))}
           </div>

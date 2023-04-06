@@ -1,6 +1,6 @@
 import * as go from "gojs";
 const $ = go.GraphObject.make;
-let numGoals = 0;
+
 
 export const makePort = (name, spot, output, input) => {
     const $ = go.GraphObject.make;
@@ -56,7 +56,7 @@ export const createPaletteNodeTemplate = () => {
 };
 
 export const createDiagramNodeTemplate = (setSelectedNode) => {
-    numGoals = numGoals+1;
+
     return $(go.Node, "Auto",
         {   
             click:(e,node) => {
@@ -103,7 +103,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
             $(go.TextBlock,
                 { 
                     name: "TEXT",
-                    text: `Goal  ${numGoals}`,
+                    text: "Goal",
                     font: "bold 14pt sans-serif",
                     editable: true,
                     isMultiline: true,
