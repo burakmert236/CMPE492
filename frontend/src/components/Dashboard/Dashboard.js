@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, InputNumber, Space } from "antd";
+import { Button, Select, Input, InputNumber, Space } from "antd";
+import {DeleteOutlined } from '@ant-design/icons';
 import "./Dashboard.scss";
-import { v4 } from 'uuid'
 const { TextArea } = Input;
 
 const Dashboard = ({ selectedNode }) => {
@@ -13,12 +13,44 @@ const Dashboard = ({ selectedNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [attrKey, setAttrKey] = useState('');
   const [attrValue, setAttrValue] = useState('');
+  const [currentType, setCurrentType] = useState('Number');
  // const [option, setOption] = useState();
+
+  const setType = (e) => {
+    setCurrentType(e);
+  };
+
+  const options = [
+    {
+      value: 'int',
+      label: 'Number',
+    },
+    {
+      value: 'string',
+      label: 'Text',
+    },
+  ];
 
   const toggleInput = () => {
     setIsOpen(!isOpen);
     setAttrKey("");
     setAttrValue("");
+  };
+
+  function deleteAttribute(key) {
+    setAttributes(attributes?.filter(i => i.key !== key));
+  };
+
+  const changeAttributes = (item, newValue) => {
+    setAttributes(attributes?.map(i => {
+        if(i?.key !== item?.key) return i;
+
+        return {
+          ...i,
+          value: newValue
+        }
+      }),
+    )
   };
 
   const handleAttrKeyChange = (e) => {
@@ -32,10 +64,21 @@ const Dashboard = ({ selectedNode }) => {
   const submitAttribute = (key, value, type) => {
     if (!selectedNode.findObject("TEXT").attributes)
       selectedNode.findObject("TEXT").attributes = []
+    if(attributes?.find(i => i.key === key) || key === "Cost" || key === "Value") {
+      alert(`Attributes with a key ${key} already exists.`)
+      return;
+    }
+    if(type === "Number" && isNaN(+value)) {
+      alert(`The value of the attribute has to have type ${type}.`)
+      return;
+    }
+    if(key === "") {
+      alert(`The name of the attribute cannot be empty.`)
+      return;
+    }
     selectedNode?.findObject("TEXT")?.attributes?.push({key: key, value: value, type: type});
     setAttributes(a => [...(a || []), {key: key, value: value, type: type}]) 
-    setAttrKey('');
-    setAttrValue('');
+    toggleInput();
   };
 
 
@@ -80,8 +123,9 @@ const Dashboard = ({ selectedNode }) => {
           </div>
           <div>
           {attributes?.map((attr) => (
-            <div  key={v4()} style={{marginLeft: "20px"}}>
-              {attr.key} :  &nbsp;&nbsp;&nbsp;&nbsp; <Input value={attrValue} placeholder={ attr.value } onChange={handleAttrValueChange} style={{width: "110px"}} />
+            <div  key={attr.key} style={{marginLeft: "20px"}}>
+              {attr.key} :  &nbsp;&nbsp;&nbsp;&nbsp; <Input value={attr.value}  onChange={(e) => changeAttributes(attr, e.target.value)} style={{width: "110px"}} />
+              <Button onClick={() => deleteAttribute(attr.key)} style={{marginLeft: "3px"}}><DeleteOutlined style={{color: "#f71000"}}/></Button>
             </div>
           ))}
           </div>
@@ -90,9 +134,10 @@ const Dashboard = ({ selectedNode }) => {
             <>
             &nbsp;&nbsp;&nbsp;&nbsp; Define new property
             <Space.Compact style={{marginLeft: "20px", marginTop: "2%"}}>
+              <Select value={currentType} defaultValue="Number" options={options} onChange={(e) => setType(e)}></Select>
               <Input value={attrKey} placeholder="Name" onChange={handleAttrKeyChange} />
               <Input value={attrValue} placeholder="Value" onChange={handleAttrValueChange} />
-              <Button onClick={() => submitAttribute(attrKey, attrValue, "int")}>Submit</Button>
+              <Button onClick={() => submitAttribute(attrKey, attrValue, currentType)}>Submit</Button>
             </Space.Compact>
             <Button className="cancel-button" style={{marginLeft: "75%", marginTop: "2%"}} onClick={(e) => toggleInput()}>
               Cancel
