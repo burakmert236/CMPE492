@@ -19,7 +19,6 @@ import {
     createPaletteLinkTemplate, 
     createPaletteNodeTemplate,
     detectCycleForSpecificLinkType,
-    detectCycleAndMarkNodes
 } from "../../helpers/functions";
 
 import "./HomePage.scss";
@@ -78,6 +77,7 @@ const HomePage = () => {
     
     }, [$, diagramObject]);
 
+    // cycle detect
     useEffect(() => {
         if(!diagramObject) return;
 
@@ -85,14 +85,11 @@ const HomePage = () => {
             const link = e.subject;
             const cycleTypes = ["Refinement", "Precedence"];
 
-            diagramObject.startTransaction('Check for cycle');
-
             for(let i = 0; i<cycleTypes?.length; i++) {
                 if (detectCycleForSpecificLinkType(diagramObject, cycleTypes[i])) {
                     // if cycle found, remove link and display error message
                     alert(`Cannot create cycle with ${cycleTypes[i]} links!`);
                     diagramObject.remove(link);
-                    diagramObject.commitTransaction('Check for cycle');
                     break;
                 }
             }
@@ -102,6 +99,7 @@ const HomePage = () => {
         diagramObject.addDiagramListener("LinkRelinked", cycleDetectFunction);
     }, [diagramObject]);
 
+    // text edit events
     useEffect(() => {
         if(!diagramObject) return;
 
@@ -132,6 +130,12 @@ const HomePage = () => {
                             new go.Point(droppedPositionX + 70, droppedPositionY + 40),
                         ])
                     );
+                }
+
+                if (obj instanceof go.Node) {
+                    const nodeCount = diagramObject?.nodes?.count;
+                    console.log(nodeCount, "Goal " + nodeCount)
+                    diagramObject.model.setDataProperty(obj.data, "text", "Goal " + nodeCount);
                 }
             }
         });
@@ -183,7 +187,7 @@ const HomePage = () => {
                 label.text = label.part.data.value;
                 diagramObject.commitTransaction();
             }
-          });
+        });
 
     }, [diagramObject])
 

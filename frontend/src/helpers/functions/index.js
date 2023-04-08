@@ -88,6 +88,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                     textAlign: "center",
                     margin: 15
                 },
+                new go.Binding("text", "text"),
             ),
             $("TreeExpanderButton", 
                 { 
