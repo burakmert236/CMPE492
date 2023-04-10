@@ -41,6 +41,18 @@ export const paletteLinkDataArray = [
     { 
         points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
         color: "black",
+        type: "AND Refinement",
+        text: "AND Refinement",
+        category: "ANDRefinement",
+        fromArrow: "Backward",
+        toArrow: "",
+        fromShortLength: 8,
+        toShortLength: 0,
+        segmentOffset: new go.Point(5, 22)
+    },
+    { 
+        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
+        color: "black",
         fromArrow: "Backward",
         text: "Precedence",
         type: "Precedence",

@@ -19,6 +19,7 @@ import {
     createPaletteLinkTemplate, 
     createPaletteNodeTemplate,
     detectCycleForSpecificLinkType,
+    junctionNodeTemplate
 } from "../../helpers/functions";
 
 import "./HomePage.scss";
@@ -55,8 +56,12 @@ const HomePage = () => {
 		// initial diagram node temaplate
         diagram.nodeTemplate = createDiagramNodeTemplate(setSelectedNode);
 
+        diagram.nodeTemplateMap.add("Junction", junctionNodeTemplate());
+
 		// initial diagram link template
         diagram.linkTemplate = createDiagramLinkTemplate(setSelectedNode);
+
+        diagram.linkTemplateMap.add("ANDRefinement", createDiagramLinkTemplate(setSelectedNode))
             
         diagram.model = new go.GraphLinksModel();
 
@@ -83,7 +88,7 @@ const HomePage = () => {
 
         const cycleDetectFunction = (e) => {
             const link = e.subject;
-            const cycleTypes = ["Refinement", "Precedence"];
+            const cycleTypes = ["Refinement", "Precedence", "AND Refinement"];
 
             for(let i = 0; i<cycleTypes?.length; i++) {
                 if (detectCycleForSpecificLinkType(diagramObject, cycleTypes[i])) {
@@ -95,8 +100,85 @@ const HomePage = () => {
             }
         }
 
-        diagramObject.addDiagramListener("LinkDrawn", cycleDetectFunction);
-        diagramObject.addDiagramListener("LinkRelinked", cycleDetectFunction);
+        const junctionConstruction = (e) => {
+            const link = e.subject;
+            if (link.category === "ANDRefinement") {
+                const fromNode = link?.fromNode;
+                const subjectToNode = link?.toNode;
+
+                if(!subjectToNode || !fromNode) return;
+
+                // Check if there's an existing AND-refinement link
+                const existingLinks = new go.List();
+                fromNode.findLinksOutOf().all(function(l) {
+                    if (l.category === "ANDRefinement" && l !== link) {
+                        existingLinks.add(l);
+                    }
+                });
+
+                const toNodes = existingLinks?.toArray().map(l => l?.toNode);
+
+                const junctionLinkProps = {
+                    category: "ANDRefinement",
+                    type: "AND Refinement",
+                    toArrow: "null",
+                    fromArrow: "null",
+                    color: "black",
+                    fromShortLength: 8,
+                    toShortLength: 0,
+                    reshapable: false,
+                    relinkableTo: false,
+                    relinkableFrom: false
+                }
+
+                if (existingLinks.count > 0) {
+
+                    const existingJunctionNode = toNodes?.find(n => n?.category === "Junction");
+                    if(existingJunctionNode) {
+                        diagramObject.model.addLinkData({ from: subjectToNode.key, to: existingJunctionNode.key, ...junctionLinkProps });
+                        diagramObject.remove(link);
+                        return;
+                    }
+
+                    // create a new juction node
+                    let centerPoint = { x: 0, y: 0 };
+                    [fromNode].concat([subjectToNode]).concat(toNodes)?.forEach(n => {
+                        centerPoint.x = centerPoint.x + n?.location?.x;
+                        centerPoint.y = centerPoint.y + n?.location?.y;
+                    })
+                    centerPoint.x = centerPoint.x / (toNodes?.length + 2);
+                    centerPoint.y = centerPoint.y / (toNodes?.length + 2);
+
+                    // Create a junction node
+                    const junctionNodeData = {
+                        category: "Junction",
+                        location: new go.Point(centerPoint.x, centerPoint.y - 20)
+                    };
+                    diagramObject.model.addNodeData(junctionNodeData);
+                    const junctionNode = diagramObject.findNodeForData(junctionNodeData);
+
+                    diagramObject.model.addLinkData({ from: fromNode.key, to: junctionNode.key, ...junctionLinkProps, fromArrow: "Backward" });
+                    diagramObject.model.addLinkData({ from: subjectToNode.key, to: junctionNode.key, ...junctionLinkProps });
+
+                    toNodes?.map(toNode => {
+                        return diagramObject.model.addLinkData({ from: toNode.key, to: junctionNode.key, ...junctionLinkProps });
+                    })
+
+                    existingLinks?.toArray()?.concat([link])?.forEach(l => {
+                        diagramObject.remove(l);
+                    });
+                }
+            
+            }
+        }
+
+        const linkEventListener = (e) => {
+            cycleDetectFunction(e);
+            junctionConstruction(e);
+        }
+
+        diagramObject.addDiagramListener("LinkDrawn", linkEventListener);
+        diagramObject.addDiagramListener("LinkRelinked", linkEventListener);
     }, [diagramObject]);
 
     // text edit events
@@ -118,6 +200,8 @@ const HomePage = () => {
 
                     if(obj?.data?.type === "Exclusion") newText = "Excludes";
 
+                    if(obj?.data?.type === "AND Refinement") newText = "AND";
+
                     const droppedPositionX = diagramObject?.lastInput?.documentPoint?.x;
                     const droppedPositionY = diagramObject?.lastInput?.documentPoint?.y;
 
@@ -133,8 +217,12 @@ const HomePage = () => {
                 }
 
                 if (obj instanceof go.Node) {
-                    const nodeCount = diagramObject?.nodes?.count;
-                    console.log(nodeCount, "Goal " + nodeCount)
+                    let nodeCount = 0;
+                    // Iterate through all the nodes in the diagram
+                    diagramObject.nodes.each(function (node) {
+                        if(node?.data?.category !== "Junction") nodeCount = nodeCount + 1;
+                    });
+
                     diagramObject.model.setDataProperty(obj.data, "text", "Goal " + nodeCount);
                 }
             }

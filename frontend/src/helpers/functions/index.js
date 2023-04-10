@@ -105,6 +105,10 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
 export const createDiagramLinkTemplate = () => {
     return $(go.Link,  // the whole link panel
         { relinkableFrom: true, relinkableTo: true, reshapable: true },
+        new go.Binding("relinkableFrom").makeTwoWay(),
+        new go.Binding("relinkableTo").makeTwoWay(),
+        new go.Binding("reshapable").makeTwoWay(),
+        new go.Binding("selectable").makeTwoWay(),
         {
             corner: 10,
             toShortLength: 8,
@@ -131,6 +135,7 @@ export const createDiagramLinkTemplate = () => {
             new go.Binding("toArrow", "toArrow"),
             new go.Binding("stroke", "color"),
             new go.Binding("fill", "color"),
+            new go.Binding("visible", "toArrow", type => type !== "null"),
         ),
 
         $(go.Shape,  // the arrowhead
@@ -138,13 +143,15 @@ export const createDiagramLinkTemplate = () => {
             new go.Binding("fromArrow", "fromArrow"),
             new go.Binding("stroke", "color"),
             new go.Binding("fill", "color"),
+            new go.Binding("visible", "fromArrow", type => type !== "null"),
         ),
 
         $(go.Panel, "Auto",
             // new go.Binding("visible", "isSelected").ofObject(),
             $(go.Shape, "RoundedRectangle",  // the link shape
                 { fill: "#fff", stroke: null },
-                new go.Binding("fill", "color")
+                new go.Binding("fill", "color"),
+                new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
             ),
 
             $(go.TextBlock,
@@ -159,13 +166,27 @@ export const createDiagramLinkTemplate = () => {
                 },
                 new go.Binding("text").makeTwoWay(),
                 new go.Binding("editable", "type", type => ["C+", "C-", "V+", "V-"].includes(type?.slice(0, 2))),
-                new go.Binding("visible", "type", type => type !== "Refinement"),
+                new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
                 new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 10pt helvetica, arial, sans-serif"),
 
             )
         )
     );
 };
+
+export const junctionNodeTemplate = () => {
+    return $(go.Node, "Auto", 
+                {
+                    isTreeExpanded: false,
+                    deletable: true
+                },
+                new go.Binding("location").makeTwoWay(),
+                $(go.Shape, "Circle", 
+                    { width: 10, height: 10, fill: "black", stroke: "black"},
+                ),
+
+            )
+}
 
 export const createPaletteLinkTemplate = () => {
     return $(go.Link,
