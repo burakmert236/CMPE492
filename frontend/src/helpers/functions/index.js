@@ -28,6 +28,7 @@ export const createPaletteNodeTemplate = () => {
 };
 
 export const createDiagramNodeTemplate = (setSelectedNode) => {
+
     return $(go.Node, "Auto",
         {   
             click:(e,node) => {
