@@ -1,3 +1,38 @@
+.dashboard-container {
+    height: calc(100% - 20px);
+    width: calc(100% - 20px);
+    padding: 10px;
+
+    .attributes {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .title {
+            margin: 8px 0;
+        }
+
+        .single-line, .new-single-line {
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+            align-items: center;
+            gap: 4px;
+
+            .number-input {
+                width: 100%;
+            }
+        }
+
+        .new-single-line {
+            grid-template-columns: 1.4fr 4fr 1fr;
+
+            .trash {
+                color: red;
+            }
+        }
+    }
+}
+
 .button-container {
     position: relative;
     margin-left: "20px";

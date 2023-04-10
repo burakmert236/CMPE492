@@ -8,20 +8,24 @@
     .palette-container {
         display: flex;
         flex-direction: column;
-        height: 60px;
+        height: 55px;
         padding: 8px;
     }
 
     .homepage-main {
         display: flex;
         flex-direction: row;
-        gap: 20px;
         height: calc(100% - 200px);
     }
 
     .homepage-dashboard {
-        width: 18%;
-        height: calc(100% - 200px);
+        height: calc(100% + 20px);
         float: left;
+        background-color: #ffffff;
+        margin: 10px 0 10px 10px;
+        padding: 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.309);
+        width: 20%;
     }
 }

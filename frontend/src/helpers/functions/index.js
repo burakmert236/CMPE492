@@ -7,9 +7,7 @@ export const createPaletteNodeTemplate = () => {
         $(go.Shape, "Terminator",
             { 
                 desiredSize: new go.Size(65, 25),
-                margin: new go.Margin(0, 0, 0, 0),
                 strokeDashArray: null,
-                parameter1: 100,
                 fill: $(go.Brush, "Linear", { 0.0: "white", 1.0: "gray" }),
             },
             new go.Binding("fill", "color"),
@@ -18,8 +16,8 @@ export const createPaletteNodeTemplate = () => {
         ),
         $(go.TextBlock, 
             { 
-                name: "TB",
-                margin: new go.Margin(7, 0, 0, 0),
+                textAlign: "Bottom",
+                margin: new go.Margin(4, 0, 0, 0),
                 font: "9pt sans-serif",
             },
             new go.Binding("text", "text")
@@ -32,6 +30,9 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
     return $(go.Node, "Auto",
         {   
             click:(e,node) => {
+                setSelectedNode(node);
+            },
+            mouseEnter:(e,node) => {
                 setSelectedNode(node);
             },
             selectable: true, 
@@ -82,7 +83,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                     name: "TEXT",
                     text: "Goal",
                     font: "bold 14pt sans-serif",
-                    editable: true,
+                    editable: false,
                     isMultiline: true,
                     maxSize: new go.Size(160, NaN),
                     wrap: go.TextBlock.WrapFit,
@@ -185,7 +186,6 @@ export const junctionNodeTemplate = () => {
                 $(go.Shape, "Circle", 
                     { width: 10, height: 10, fill: "black", stroke: "black"},
                 ),
-
             )
 }
 

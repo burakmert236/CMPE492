@@ -39,6 +39,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
 
   function deleteAttribute(key) {
     setAttributes(attributes?.filter(i => i.key !== key));
+    selectedNode.findObject("TEXT").attributes = selectedNode?.findObject("TEXT")?.attributes?.filter(i => i.key !== key);
   };
 
   const changeAttributes = (item, newValue) => {
@@ -91,67 +92,100 @@ const Dashboard = ({ selectedNode, diagram }) => {
 
     
   return (
-    <div>
+    <div className="dashboard-container">
       {selectedNode ? (
-        <div className="dashboard-container" >
-          <h3 style={{marginLeft: "20px"}}> Node Properties </h3>
-          <div style={{marginLeft: "20px"}}>
-            Text: 
-            <TextArea placeholder={text} rows={2} value={text} onChange={(e) => {
-              setText(e.target.value);
-              selectedNode.findObject("TEXT").text = e.target.value;
-              diagram.commitTransaction("text-edit");
-            }}
+        <div className="attributes">
+          <h3 className="title">Node Properties</h3>
+
+          <div className="single-line">
+            <span>Text</span>
+            <TextArea 
+              placeholder={text} 
+              rows={1} 
+              value={text} 
+              onChange={(e) => {
+                setText(e.target.value);
+                selectedNode.findObject("TEXT").text = e.target.value;
+                diagram.commitTransaction("text-edit");
+              }}
             />
           </div>
-          <div style={{marginLeft: "20px"}}>
-            Cost: &nbsp;&nbsp;&nbsp;
-            <InputNumber placeholder={"Enter a cost"} value={cost} onChange={(e) => {
-              setCost(e)
-              selectedNode.findObject("TEXT").cost = e;
-              diagram.commitTransaction("text-edit");
-            }}
-            style={{width: "110px"}}
+
+          <div className="single-line">
+            <span>Cost</span>
+            <InputNumber 
+              placeholder={"Enter a cost"} 
+              value={cost} 
+              className="number-input"
+              onChange={(e) => {
+                setCost(e)
+                selectedNode.findObject("TEXT").cost = e;
+                diagram.commitTransaction("text-edit");
+              }}
             />
           </div>
-          <div style={{marginLeft: "20px"}}>
-            Value: &nbsp;
-            <InputNumber placeholder={"Enter a value"} value={value} onChange={(e) => {
-              setValue(e)
-              selectedNode.findObject("TEXT").value = e ;
-              diagram.commitTransaction("text-edit");
-            }}
-            
+
+          <div className="single-line">
+            <span>Value</span>
+            <InputNumber 
+              placeholder={"Enter a value"} 
+              value={value} 
+              className="number-input"
+              onChange={(e) => {
+                setValue(e)
+                selectedNode.findObject("TEXT").value = e ;
+                diagram.commitTransaction("text-edit");
+              }}
             />
           </div>
+          
           <div>
-          {attributes?.map((attr) => (
-            <div  key={attr.key} style={{marginLeft: "20px"}}>
-              {attr.key} :  &nbsp;&nbsp;&nbsp;&nbsp; <Input value={attr.value}  onChange={(e) => changeAttributes(attr, e.target.value)} style={{width: "110px"}} />
-              <Button onClick={() => deleteAttribute(attr.key)} style={{marginLeft: "3px"}}><DeleteOutlined style={{color: "#f71000"}}/></Button>
-            </div>
-          ))}
+            {attributes?.map((attr) => (
+              <div key={attr.key} className="new-single-line">
+                <span>{attr.key}</span>
+                <Input 
+                  value={attr.value} 
+                  onChange={(e) => changeAttributes(attr, e.target.value)}
+                />
+                <Button 
+                  onClick={() => deleteAttribute(attr.key)} 
+                >
+                  <DeleteOutlined className="trash"/>
+                </Button>
+              </div>
+            ))}
           </div>
 
           {isOpen && (
             <>
-            &nbsp;&nbsp;&nbsp;&nbsp; Define new property
-            <Space.Compact style={{marginLeft: "20px", marginTop: "2%"}}>
-              <Select value={currentType} defaultValue="Number" options={options} onChange={(e) => setType(e)}></Select>
-              <Input value={attrKey} placeholder="Name" onChange={handleAttrKeyChange} />
-              <Input value={attrValue} placeholder="Value" onChange={handleAttrValueChange} />
-              <Button onClick={() => submitAttribute(attrKey, attrValue, currentType)}>Submit</Button>
-            </Space.Compact>
-            <Button className="cancel-button" style={{marginLeft: "75%", marginTop: "2%"}} onClick={(e) => toggleInput()}>
-              Cancel
-            </Button></>
+              &nbsp;&nbsp;&nbsp;&nbsp; Define new property
+              <Space.Compact style={{marginLeft: "20px", marginTop: "2%"}}>
+                <Select value={currentType} defaultValue="Number" options={options} onChange={(e) => setType(e)}></Select>
+                <Input value={attrKey} placeholder="Name" onChange={handleAttrKeyChange} />
+                <Input value={attrValue} placeholder="Value" onChange={handleAttrValueChange} />
+                <Button onClick={() => submitAttribute(attrKey, attrValue, currentType)}>Submit</Button>
+              </Space.Compact>
+            </>
           )}
           
-          { !isOpen && (
-          <Button className="submit-button" style={{marginLeft: "65%", marginTop: "20%"}} onClick={(e) => toggleInput()}>
-            Add Attribute
-          </Button>
-          )}
+          { !isOpen ? 
+            (
+              <Button 
+                className="submit-button" 
+                onClick={(e) => toggleInput()}
+              >
+                Add Attribute
+              </Button>
+            ) : 
+            (
+              <Button 
+                className="cancel-button" 
+                onClick={(e) => toggleInput()}
+              >
+                Cancel
+              </Button>
+            )
+          }
 
         </div>
       ) : (
