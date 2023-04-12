@@ -13,7 +13,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [attrKey, setAttrKey] = useState('');
   const [attrValue, setAttrValue] = useState('');
-  const [currentType, setCurrentType] = useState('Number');
+  const [currentType, setCurrentType] = useState('integer');
  // const [option, setOption] = useState();
 
   const setType = (e) => {
@@ -22,12 +22,12 @@ const Dashboard = ({ selectedNode, diagram }) => {
 
   const options = [
     {
-      value: 'int',
-      label: 'Number',
+      value: 'integer',
+      label: 'int',
     },
     {
       value: 'string',
-      label: 'Text',
+      label: 'str',
     },
   ];
 
@@ -89,7 +89,6 @@ const Dashboard = ({ selectedNode, diagram }) => {
     setValue(selectedNode?.findObject("TEXT")?.value);
     setAttributes(selectedNode?.findObject("TEXT")?.attributes);
   }, [selectedNode]);
-
     
   return (
     <div className="dashboard-container">
@@ -143,10 +142,17 @@ const Dashboard = ({ selectedNode, diagram }) => {
             {attributes?.map((attr) => (
               <div key={attr.key} className="new-single-line">
                 <span>{attr.key}</span>
-                <Input 
-                  value={attr.value} 
-                  onChange={(e) => changeAttributes(attr, e.target.value)}
-                />
+                { attr?.type === "string" ?
+                  <Input 
+                    value={attr.value} 
+                    onChange={(e) => changeAttributes(attr, e.target.value)}
+                  /> : 
+                  <InputNumber 
+                    style={{ width: "100%" }}
+                    value={attr.value} 
+                    onChange={(e) => changeAttributes(attr, e)}
+                  />
+                }
                 <Button 
                   onClick={() => deleteAttribute(attr.key)} 
                 >
@@ -158,12 +164,17 @@ const Dashboard = ({ selectedNode, diagram }) => {
 
           {isOpen && (
             <>
-              &nbsp;&nbsp;&nbsp;&nbsp; Define new property
-              <Space.Compact style={{marginLeft: "20px", marginTop: "2%"}}>
-                <Select value={currentType} defaultValue="Number" options={options} onChange={(e) => setType(e)}></Select>
-                <Input value={attrKey} placeholder="Name" onChange={handleAttrKeyChange} />
-                <Input value={attrValue} placeholder="Value" onChange={handleAttrValueChange} />
-                <Button onClick={() => submitAttribute(attrKey, attrValue, currentType)}>Submit</Button>
+              <span className="define-title">Define new property</span>
+              <Space.Compact>
+                <Select value={currentType} defaultValue="int" options={options} onChange={(e) => setType(e)}></Select>
+                <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
+                  <Input value={attrKey} placeholder="Name" onChange={handleAttrKeyChange} style={{ borderTopRightRadius: "0", borderBottomRightRadius: "0", borderRight: "none" }}/>
+                  {
+                    currentType === "string" ? 
+                    <Input value={attrValue} placeholder="Value" onChange={handleAttrValueChange} /> :
+                    <InputNumber value={attrValue} placeholder="Value" onChange={(e) => setAttrValue(e)} />
+                  }
+                </div>
               </Space.Compact>
             </>
           )}
@@ -178,12 +189,20 @@ const Dashboard = ({ selectedNode, diagram }) => {
               </Button>
             ) : 
             (
-              <Button 
-                className="cancel-button" 
-                onClick={(e) => toggleInput()}
-              >
-                Cancel
-              </Button>
+              <div className="inline-buttons">
+                <Button 
+                  className="submit-button" 
+                  onClick={() => submitAttribute(attrKey, attrValue, currentType)}
+                >
+                  Submit
+                </Button>
+                <Button 
+                  className="cancel-button" 
+                  onClick={(e) => toggleInput()}
+                >
+                  Cancel
+                </Button>
+              </div>
             )
           }
 

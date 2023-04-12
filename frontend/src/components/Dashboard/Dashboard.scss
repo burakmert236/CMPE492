@@ -16,7 +16,7 @@
             display: grid;
             grid-template-columns: 1fr 4fr;
             align-items: center;
-            gap: 4px;
+            gap: 10px;
 
             .number-input {
                 width: 100%;
@@ -35,9 +35,33 @@
 
 .button-container {
     position: relative;
-    margin-left: "20px";
+}
+
+.inline-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 
 .cancel-button {
     background-color: #f71000;
+    width: 100%;
+    color: white;
+
+    button {
+        &:hover {
+            border-color: red;
+            color: white;
+        }
+    }
+}
+
+.submit-button {
+    width: 100%;
+}
+
+.define-title {
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
 }
