@@ -22,7 +22,7 @@ export const diagramConfiguration = {
 };
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
-    { text: "Goal Node", color: "#ACF3DA" }
+    { text: "Goal Node", color: "#ACF3DA", location: new go.Point(0, 0) }
 ];
 
 export const paletteLinkDataArray = [

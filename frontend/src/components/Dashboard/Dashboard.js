@@ -39,7 +39,11 @@ const Dashboard = ({ selectedNode, diagram }) => {
 
   function deleteAttribute(key) {
     setAttributes(attributes?.filter(i => i.key !== key));
-    selectedNode.findObject("TEXT").attributes = selectedNode?.findObject("TEXT")?.attributes?.filter(i => i.key !== key);
+    diagram.model.setDataProperty(
+      selectedNode?.data, 
+      "attributes", 
+      selectedNode?.findObject("TEXT")?.attributes?.filter(i => i.key !== key)
+    );
   };
 
   const changeAttributes = (item, newValue) => {
@@ -63,8 +67,10 @@ const Dashboard = ({ selectedNode, diagram }) => {
   };
 
   const submitAttribute = (key, value, type) => {
-    if (!selectedNode.findObject("TEXT").attributes)
-      selectedNode.findObject("TEXT").attributes = []
+    if (!selectedNode?.data?.attributes) {
+      diagram.model.setDataProperty(selectedNode?.data, "attributes", []);
+    }
+
     if(attributes?.find(i => i.key === key) || key === "Cost" || key === "Value") {
       alert(`Attributes with a key ${key} already exists.`)
       return;
@@ -77,17 +83,17 @@ const Dashboard = ({ selectedNode, diagram }) => {
       alert(`The name of the attribute cannot be empty.`)
       return;
     }
-    selectedNode?.findObject("TEXT")?.attributes?.push({key: key, value: value, type: type});
+    diagram.model.setDataProperty(selectedNode?.data, "attributes", [...selectedNode?.data?.attributes, {key: key, value: value, type: type}]);
     setAttributes(a => [...(a || []), {key: key, value: value, type: type}]) 
     toggleInput();
   };
 
 
   useEffect(() => {
-    setText(selectedNode?.findObject("TEXT")?.text);
-    setCost(selectedNode?.findObject("TEXT")?.cost);
-    setValue(selectedNode?.findObject("TEXT")?.value);
-    setAttributes(selectedNode?.findObject("TEXT")?.attributes);
+    setText(selectedNode?.data?.text);
+    setCost(selectedNode?.data?.cost);
+    setValue(selectedNode?.data?.value);
+    setAttributes(selectedNode?.data?.attributes);
   }, [selectedNode]);
     
   return (
@@ -104,7 +110,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
               value={text} 
               onChange={(e) => {
                 setText(e.target.value);
-                selectedNode.findObject("TEXT").text = e.target.value;
+                diagram.model.setDataProperty(selectedNode?.data, "text", e.target.value);
                 diagram.commitTransaction("text-edit");
               }}
             />
@@ -118,7 +124,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
               className="number-input"
               onChange={(e) => {
                 setCost(e)
-                selectedNode.findObject("TEXT").cost = e;
+                diagram.model.setDataProperty(selectedNode?.data, "cost", e);
                 diagram.commitTransaction("text-edit");
               }}
             />
@@ -132,7 +138,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
               className="number-input"
               onChange={(e) => {
                 setValue(e)
-                selectedNode.findObject("TEXT").value = e ;
+                diagram.model.setDataProperty(selectedNode?.data, "value", e);
                 diagram.commitTransaction("text-edit");
               }}
             />

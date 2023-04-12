@@ -52,6 +52,8 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
         { locationSpot: go.Spot.Center },
         { resizable: true, resizeObjectName: "PANEL", toLinkable: false, fromLinkable: false },
 
+        new go.Binding("location", "location").makeTwoWay(),
+
         $(go.Shape, "Terminator",
             {
                 name: "SHAPE", fill: "#000", strokeWidth: 1,

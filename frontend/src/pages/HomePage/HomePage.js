@@ -134,6 +134,18 @@ const HomePage = () => {
                 if (existingLinks.count > 0) {
 
                     const existingJunctionNode = toNodes?.find(n => n?.category === "Junction");
+                    const existingJunctionLink = existingLinks?.toArray()?.find(l => l?.toNode?.key === existingJunctionNode?.key);
+
+                    let existingFromLink = false;
+                    fromNode.findLinksOutOf().all(function(l) {
+                        console.log(l.category, l !== link, l?.data?.fromArrow)
+                        if (l.category === "ANDRefinement" && l !== link && l?.data?.fromArrow === "Backward") {
+                            existingFromLink = true;
+                        }
+                    });
+
+                    if(existingJunctionNode && existingJunctionLink?.data?.fromArrow !== "Backward") return;
+
                     if(existingJunctionNode) {
                         diagramObject.model.addLinkData({ from: subjectToNode.key, to: existingJunctionNode.key, ...junctionLinkProps });
                         diagramObject.remove(link);
@@ -279,10 +291,14 @@ const HomePage = () => {
 
     }, [diagramObject])
 
+    diagramObject?.nodes?.each(function (node) {
+        console.log(node.data)
+    });
+
     return (
         <div className="homepage-layout">
             
-            <Navbar commandHandlerRef={commandHandlerRef}/>
+            <Navbar commandHandlerRef={commandHandlerRef} diagram={diagramObject}/>
 
             <div className="palette-container">
                 <Palette paletteRef={paletteRef}/>

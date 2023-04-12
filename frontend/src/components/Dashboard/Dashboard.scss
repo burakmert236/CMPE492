@@ -48,11 +48,9 @@
     width: 100%;
     color: white;
 
-    button {
-        &:hover {
-            border-color: red;
-            color: white;
-        }
+    &:hover {
+        border-color: black !important;
+        color: white !important;
     }
 }
 
