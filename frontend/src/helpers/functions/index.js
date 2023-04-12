@@ -32,9 +32,6 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
             click:(e,node) => {
                 setSelectedNode(node);
             },
-            mouseEnter:(e,node) => {
-                setSelectedNode(node);
-            },
             selectable: true, 
             selectionAdornmentTemplate:
                 $(go.Adornment, "Auto",

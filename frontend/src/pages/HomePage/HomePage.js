@@ -108,6 +108,15 @@ const HomePage = () => {
 
                 if(!subjectToNode || !fromNode) return;
 
+                let existingFromLink = false;
+                let existingFromNode = null;
+                fromNode.findLinksConnected().each(function(l) {
+                    if (l.category === "ANDRefinement" && l !== link && l?.data?.fromArrow === "Backward") {
+                        existingFromLink = l;
+                        existingFromNode = diagramObject.findNodeForKey(l?.data?.to);
+                    }
+                });
+
                 // Check if there's an existing AND-refinement link
                 const existingLinks = new go.List();
                 fromNode.findLinksOutOf().all(function(l) {
@@ -115,6 +124,7 @@ const HomePage = () => {
                         existingLinks.add(l);
                     }
                 });
+
 
                 const toNodes = existingLinks?.toArray().map(l => l?.toNode);
 
@@ -135,26 +145,21 @@ const HomePage = () => {
 
                     const existingJunctionNode = toNodes?.find(n => n?.category === "Junction");
                     const existingJunctionLink = existingLinks?.toArray()?.find(l => l?.toNode?.key === existingJunctionNode?.key);
+                    
+                    if(existingJunctionNode && existingJunctionLink?.data?.fromArrow !== "Backward" && !existingFromLink) return;
 
-                    let existingFromLink = false;
-                    fromNode.findLinksOutOf().all(function(l) {
-                        console.log(l.category, l !== link, l?.data?.fromArrow)
-                        if (l.category === "ANDRefinement" && l !== link && l?.data?.fromArrow === "Backward") {
-                            existingFromLink = true;
-                        }
-                    });
-
-                    if(existingJunctionNode && existingJunctionLink?.data?.fromArrow !== "Backward") return;
-
-                    if(existingJunctionNode) {
-                        diagramObject.model.addLinkData({ from: subjectToNode.key, to: existingJunctionNode.key, ...junctionLinkProps });
+                    if(existingJunctionNode && (!existingFromLink || existingFromNode?.category === "Junction")) {
+                        const junctionNode = existingFromLink && existingFromNode?.category === "Junction" ? existingFromNode : existingJunctionNode;
+                        diagramObject.model.addLinkData({ from: subjectToNode.key, to: junctionNode.key, ...junctionLinkProps });
                         diagramObject.remove(link);
                         return;
                     }
 
+                    if(existingFromLink && !toNodes?.find(n => n?.key === existingFromNode?.key)) toNodes.push(existingFromNode);
+
                     // create a new juction node
                     let centerPoint = { x: 0, y: 0 };
-                    [fromNode].concat([subjectToNode]).concat(toNodes)?.forEach(n => {
+                    [fromNode].concat([subjectToNode]).concat(toNodes)?.filter(n => n?.data?.category !== "Junction")?.forEach(n => {
                         centerPoint.x = centerPoint.x + n?.location?.x;
                         centerPoint.y = centerPoint.y + n?.location?.y;
                     })
@@ -176,8 +181,10 @@ const HomePage = () => {
                         return diagramObject.model.addLinkData({ from: toNode.key, to: junctionNode.key, ...junctionLinkProps });
                     })
 
+                    if(existingFromLink) existingLinks.push(existingFromLink);
+
                     existingLinks?.toArray()?.concat([link])?.forEach(l => {
-                        diagramObject.remove(l);
+                        if(l?.data?.fromArrow === "Backward") diagramObject.remove(l);
                     });
                 }
             
@@ -291,9 +298,18 @@ const HomePage = () => {
 
     }, [diagramObject])
 
-    diagramObject?.nodes?.each(function (node) {
-        console.log(node.data)
-    });
+    // move listener 
+    useEffect(() => {
+        if(!diagramObject) return;
+
+        // Add a SelectionMoved event listener to the diagram
+        diagramObject.addDiagramListener("SelectionMoved", function(e) {
+            const node = e.diagram.selection.first();
+            if (node !== null && node instanceof go.Node) {
+                setSelectedNode(node);
+            }
+        });
+    }, [diagramObject])
 
     return (
         <div className="homepage-layout">
