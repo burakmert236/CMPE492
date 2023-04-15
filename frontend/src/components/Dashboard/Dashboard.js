@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Select, Input, InputNumber, Space } from "antd";
+import { Button, Select, Input, InputNumber, Space, Checkbox } from "antd";
 import {DeleteOutlined } from '@ant-design/icons';
 import "./Dashboard.scss";
 const { TextArea } = Input;
@@ -9,6 +9,8 @@ const Dashboard = ({ selectedNode, diagram }) => {
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
   const [cost, setCost] = useState(null); 
+  const [isMandatory, setIsMandatory] = useState(false);
+  const [isImplemented, setIsImplemented] = useState(false);
   const [attributes, setAttributes] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [attrKey, setAttrKey] = useState('');
@@ -94,13 +96,15 @@ const Dashboard = ({ selectedNode, diagram }) => {
     setCost(selectedNode?.data?.cost);
     setValue(selectedNode?.data?.value);
     setAttributes(selectedNode?.data?.attributes);
+    setIsMandatory(selectedNode?.data?.is_mandatory);
+    setIsImplemented(selectedNode?.data?.is_implemented);
   }, [selectedNode]);
     
   return (
     <div className="dashboard-container">
       {selectedNode ? (
         <div className="attributes">
-          <h3 className="title">Node Properties</h3>
+          <h3 className="title">Goal Properties</h3>
 
           <div className="single-line">
             <span>Text</span>
@@ -142,6 +146,31 @@ const Dashboard = ({ selectedNode, diagram }) => {
                 diagram.commitTransaction("text-edit");
               }}
             />
+          </div>
+
+          <div>
+            <div>
+              <Checkbox 
+                checked={isMandatory}
+                onChange={e => {
+                  diagram.model.setDataProperty(selectedNode?.data, "is_mandatory", e.target.checked);
+                  setIsMandatory(e.target.checked);
+                }}
+              >
+                Is Mandatory
+              </Checkbox>
+            </div>
+            <div>
+              <Checkbox 
+                checked={isImplemented}
+                onChange={e => {
+                  diagram.model.setDataProperty(selectedNode?.data, "is_implemented", e.target.checked);
+                  setIsImplemented(e.target.checked); 
+                }}
+              >
+                Is Implemented
+              </Checkbox>
+            </div>
           </div>
           
           <div>
@@ -215,7 +244,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
         </div>
       ) : (
         <div>
-          <p>Select a node to view its properties</p>
+          <p>Select a goal to view its properties</p>
         </div>
       )}
     </div>
