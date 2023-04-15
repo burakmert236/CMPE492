@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Button, Select, Input, InputNumber, Space, Checkbox } from "antd";
-import {DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
+import { setAttributes as setStateAttributes } from "../../redux/attributesSlice";
+
 import "./Dashboard.scss";
 const { TextArea } = Input;
 
 const Dashboard = ({ selectedNode, diagram }) => {
+  const dispatch = useDispatch();
+
+  const { attributes: stateAttributes } = useSelector((state) => state.attributes);
 
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
@@ -40,12 +46,16 @@ const Dashboard = ({ selectedNode, diagram }) => {
   };
 
   function deleteAttribute(key) {
+    const attribute = attributes?.find(i => i.key === key);
+
     setAttributes(attributes?.filter(i => i.key !== key));
     diagram.model.setDataProperty(
       selectedNode?.data, 
       "attributes", 
       selectedNode?.findObject("TEXT")?.attributes?.filter(i => i.key !== key)
     );
+
+    dispatch(setStateAttributes({ attribute, func: "delete" }));
   };
 
   const changeAttributes = (item, newValue) => {
@@ -74,7 +84,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
     }
 
     if(attributes?.find(i => i.key === key) || key === "Cost" || key === "Value") {
-      alert(`Attributes with a key ${key} already exists.`)
+      alert(`Attribute with the key "${key}" already exists.`)
       return;
     }
     if(type === "Number" && isNaN(+value)) {
@@ -86,7 +96,10 @@ const Dashboard = ({ selectedNode, diagram }) => {
       return;
     }
     diagram.model.setDataProperty(selectedNode?.data, "attributes", [...selectedNode?.data?.attributes, {key: key, value: value, type: type}]);
-    setAttributes(a => [...(a || []), {key: key, value: value, type: type}]) 
+    setAttributes(a => [...(a || []), {key: key, value: value, type: type}]);
+
+    dispatch(setStateAttributes({ attribute: { key: key, value: value, type: type }, func: "add"}));
+
     toggleInput();
   };
 

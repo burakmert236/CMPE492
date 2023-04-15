@@ -174,7 +174,7 @@ const Navbar = ({ commandHandlerRef, diagram }) => {
                     </div>
                 </div>
 
-                <OptimizeDropdown />
+                <OptimizeDropdown diagram={diagram}/>
             </div>
 
         </div>
