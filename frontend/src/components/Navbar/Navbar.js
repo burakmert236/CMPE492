@@ -140,7 +140,7 @@ const Navbar = ({ commandHandlerRef, diagram }) => {
                                 {
                                     key: 1,
                                     label: "Export",
-                                    children: ["JSON", "SVG", "PNG", "STM"].map((abb, index) => generateExportLines(abb, index, "Export")),
+                                    children: ["JSON", "SVG", "PNG", "SMT"].map((abb, index) => generateExportLines(abb, index, "Export")),
                                 },
                                 {
                                     key: 2,
