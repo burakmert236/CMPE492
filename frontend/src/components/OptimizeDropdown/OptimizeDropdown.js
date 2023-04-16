@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Dropdown, Space, Switch } from 'antd';
-import { DownOutlined, DeleteOutlined, LeftOutlined } from '@ant-design/icons';
+import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
 import { capitalize } from "../../helpers/functions";
+import { optimize } from "../../redux/optimizeSlice";
 
 import "./OptimizeDropdown.scss";
 
@@ -93,14 +94,23 @@ const OptimizeDropdown = ({ diagram }) => {
             )
         }
 
-        console.log(newItems)
-
         setItems(newItems);
     }, [integerAttributes, criteriaAttributes]);
 
+    const handleOptimize = () => {
+        optimize(diagram.model)
+            .then(res => console.log(res))
+            .catch(res => console.log("err", res))
+    }
+
     return(
         <div className="optimize-container">
-            <span className="optimize-title">OPTIMIZE</span>
+            <span 
+                className="optimize-title"
+                onClick={() => handleOptimize()}
+            >
+                OPTIMIZE
+            </span>
             <Dropdown
                 arrow={false}
                 placement="bottom"

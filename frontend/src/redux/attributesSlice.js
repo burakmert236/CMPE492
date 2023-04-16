@@ -1,6 +1,4 @@
-import axios from 'axios';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { REACT_APP_BASE_ENDPOINT as url } from '../helpers/constants';
+import { createSlice } from '@reduxjs/toolkit';
 
 const attributesSlice = createSlice({
     name: 'attributes',
