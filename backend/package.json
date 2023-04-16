@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend",
+  "main": "app.js",
+  "scripts": {
+    "start": "node v1/src/app.js",
+    "dev": "nodemon -L v1/src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burakmert236/CMPE492-Modeling-Editor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/burakmert236/CMPE492-Modeling-Editor/issues"
+  },
+  "homepage": "https://github.com/burakmert236/CMPE492-Modeling-Editor#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "helmet": "^6.1.5",
+    "http-status": "^1.6.2",
+    "nodemon": "^2.0.22"
+  }
+}
