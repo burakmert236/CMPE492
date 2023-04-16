@@ -2,13 +2,11 @@ const express = require('express');
 const helmet = require('helmet'); // for security
 const cors = require('cors');
 
-const config = require('./config');
+const { APP_PORT } = require('./constants');
 
 const {
     OptimizeRoutes,
 } = require('./api-routes');
-
-config();
 
 const app = express();
 
@@ -19,7 +17,7 @@ app.use(helmet());
 app.use(cors());
 app.options('*', cors());
 
-app.listen(process.env.APP_PORT, () => {
-    console.log(`Server is running on port ${process.env.APP_PORT}`);
+app.listen(APP_PORT, () => {
+    console.log(`Server is running on port ${APP_PORT}`);
     app.use('/api/v1/optimize', OptimizeRoutes);
 })
