@@ -22,6 +22,7 @@
 
     button {
         background-color: #50E2AD !important;
+        margin: 0 0 0 15px;
     }
 }
 
@@ -38,6 +39,24 @@
 }
 
 .down {
-    margin: 12px 0 0 7px;
     transform: translateY(0%) rotate(90deg) skewY(30deg) scaleX(.866);
+}
+
+.grey {
+    color: rgb(166, 166, 166);
+    font-weight: 500;
+    margin-top: 1px;
+    margin-right: 5px;
+    font-size: 1.1rem;
+}
+
+.criteria-delete {
+    font-size: 0.8rem;
+    margin: 0 2px 2px 7px;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        color: red;
+    }
 }

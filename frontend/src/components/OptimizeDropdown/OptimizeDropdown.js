@@ -1,34 +1,102 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Dropdown, Space, Switch } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, DeleteOutlined, LeftOutlined } from '@ant-design/icons';
+import { capitalize } from "../../helpers/functions";
 
 import "./OptimizeDropdown.scss";
 
 const OptimizeDropdown = ({ diagram }) => {
     const { attributes: stateAttributes } = useSelector((state) => state.attributes);
 
-    const [costMin, setCostMin] = useState(true);
-    const [valueMin, setValueMin] = useState(true);
+    const [items, setItems] = useState([]);
     const [integerAttributes, setIntegerAttributes] = useState([]);
 
-    // useEffect(() => {
-    //     let tempIntegerAttributes = [];
+    const [criteriaAttributes, setCriteriaAttributes] = useState([
+        {
+            key: "cost",
+            min: true
+        },
+        {
+            key: "value",
+            min: true
+        }
+    ]);
 
-    //     const nodes = diagram.nodes;
-    //     while (nodes.next()) {
-    //         const node = nodes.value;
-    //         const attributes = node?.data?.attributes;
-    //         const intAttributes = attributes?.filter(a => a?.type === "string");
-            
-    //         tempIntegerAttributes = tempIntegerAttributes.concat(intAttributes);
-    //     }
+    useEffect(() => {
+        setIntegerAttributes(stateAttributes?.filter(a => a?.type === "integer"));
+    }, [stateAttributes]);
 
-    //     tempIntegerAttributes = tempIntegerAttributes?.filter((value, index, self) => self.map(x => x?.key).indexOf(value?.key) === index);
-    //     setIntegerAttributes(tempIntegerAttributes);
-    // }, [diagram?.nodes]);
+    useEffect(() => {
+        const newItems = criteriaAttributes?.map((a, index) => {
+            return {
+                key: index,
+                label: (
+                    <div 
+                        className="optimize-line"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <span>{ capitalize(a?.key) }</span>  
+                        <Switch
+                            checkedChildren="max" 
+                            unCheckedChildren="min" 
+                            checked={ a?.min } 
+                            onChange={() => {
+                                const index = criteriaAttributes?.findIndex(aa => aa?.key === a?.key );
+                                setCriteriaAttributes([
+                                    ...criteriaAttributes?.slice(0, index),
+                                    { ...a, min: !a?.min },
+                                    ...criteriaAttributes?.slice(index + 1),
+                                ])
+                            }}
+                        />
+                        { (a?.key !== "cost" && a?.key !== "value") && 
+                            <span 
+                                className="criteria-delete" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    setCriteriaAttributes([...criteriaAttributes?.filter(aa => aa?.key !== a?.key)])
+                                }}
+                            >
+                                <DeleteOutlined />
+                            </span>
+                        }
+                    </div>
+                )
+            }
+        })
 
-    console.log(stateAttributes)
+        const nonAddedIntegerAttributes = integerAttributes?.filter(a => !criteriaAttributes?.find(aa => aa?.key === a?.key));
+
+        if(nonAddedIntegerAttributes?.length > 0) {
+            newItems.push(
+                {
+                    key: 2,  
+                    label: "Select another attribute",
+                    children: nonAddedIntegerAttributes?.map((a, index) => {
+                        return {
+                            key: `1-${index}`,
+                            label: (
+                                <div 
+                                    onClick={() => {
+                                        setCriteriaAttributes([...criteriaAttributes, { ...a, min: false }])
+                                    }} 
+                                    className="export-type-line"
+                                >
+                                    { capitalize(a?.key) }
+                                </div>
+                            )
+                        }
+                    })
+                }
+            )
+        }
+
+        console.log(newItems)
+
+        setItems(newItems);
+    }, [integerAttributes, criteriaAttributes]);
 
     return(
         <div className="optimize-container">
@@ -36,50 +104,7 @@ const OptimizeDropdown = ({ diagram }) => {
             <Dropdown
                 arrow={false}
                 placement="bottom"
-                menu={{
-                    items: [
-                        {
-                            key: 1,
-                            label: (
-                                <div 
-                                    className="optimize-line"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <span>Cost</span>  
-                                    <Switch 
-                                        checkedChildren="max" 
-                                        unCheckedChildren="min" 
-                                        checked={!costMin} 
-                                        onChange={() => setCostMin(m => !m)}
-                                    />
-                                </div>
-                            )
-                        },
-                        {
-                            key: 2,
-                            label: (
-                                <div 
-                                    className="optimize-line"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <span>Value</span>
-                                    <Switch 
-                                        checkedChildren="max" 
-                                        unCheckedChildren="min" 
-                                        checked={!valueMin} 
-                                        onChange={() => setValueMin(m => !m)}
-                                    />
-                                </div>
-                            )
-                        },
-                        {
-                            key: 3,
-                            label: (
-                                <div>Select</div>
-                            )
-                        }
-                    ]
-                }}
+                menu={{ items, expandIcon: () => (<></>) }}
             >
                 <Space>
                     <div className="triangle down"></div>

@@ -14,7 +14,7 @@ const attributesSlice = createSlice({
 
         const { attribute, func } = action.payload;
 
-        const existingAttributeIndex = state.attributes?.findIndex(a => a?.key === attribute?.key);
+        const existingAttributeIndex = state.attributes?.findIndex(a => a?.key === attribute?.key && a?.type === attribute?.type);
         const existingAttribute = existingAttributeIndex !== -1 ? state.attributes[existingAttributeIndex] : null;
 
         if(func === "add") {

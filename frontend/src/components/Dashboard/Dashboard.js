@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button, Select, Input, InputNumber, Space, Checkbox } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import { setAttributes as setStateAttributes } from "../../redux/attributesSlice";
+import { capitalize } from "../../helpers/functions";
 
 import "./Dashboard.scss";
 const { TextArea } = Input;
 
 const Dashboard = ({ selectedNode, diagram }) => {
   const dispatch = useDispatch();
-
-  const { attributes: stateAttributes } = useSelector((state) => state.attributes);
 
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
@@ -189,7 +188,8 @@ const Dashboard = ({ selectedNode, diagram }) => {
           <div>
             {attributes?.map((attr) => (
               <div key={attr.key} className="new-single-line">
-                <span>{attr.key}</span>
+                <span>{capitalize(attr.key)}</span>
+
                 { attr?.type === "string" ?
                   <Input 
                     value={attr.value} 
@@ -201,11 +201,13 @@ const Dashboard = ({ selectedNode, diagram }) => {
                     onChange={(e) => changeAttributes(attr, e)}
                   />
                 }
+
                 <Button 
                   onClick={() => deleteAttribute(attr.key)} 
                 >
                   <DeleteOutlined className="trash"/>
                 </Button>
+
               </div>
             ))}
           </div>
