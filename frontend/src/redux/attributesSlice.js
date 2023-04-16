@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-const url = process.env.REACT_APP_BASE_ENDPOINT;
+import { REACT_APP_BASE_ENDPOINT as url } from '../helpers/constants';
 
 const attributesSlice = createSlice({
     name: 'attributes',
