@@ -1,6 +1,8 @@
 import * as go from "gojs";
 const $ = go.GraphObject.make;
 
+export const REACT_APP_BASE_ENDPOINT = "http://localhost:3001";
+
 export const diagramConfiguration = {
     allowZoom: true,
     "initialContentAlignment": go.Spot.Center,
