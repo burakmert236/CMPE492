@@ -102,12 +102,21 @@ const HomePage = () => {
 
         const junctionConstruction = (e) => {
             const link = e.subject;
+
+            // if newly constructed link is not an "and refinement" link, do nothing
             if (link.category === "ANDRefinement") {
+                // two connected node by the new link
+                // from and to have reverse meaning here, because refinement links towards upward
+                // fromNode is parent at thr above
                 const fromNode = link?.fromNode;
                 const subjectToNode = link?.toNode;
 
+                // if there is no coonection of two nodes, do nothing (links is not connected)
                 if(!subjectToNode || !fromNode) return;
 
+                // find an "and refinement" link which is connected to the fromNode and has a Backward arrow
+                // since arrows are reversed it actually has a Standard arrow head
+                // if this link exists, also find the node it connects
                 let existingFromLink = false;
                 let existingFromNode = null;
                 fromNode.findLinksConnected().each(function(l) {
@@ -117,7 +126,7 @@ const HomePage = () => {
                     }
                 });
 
-                // Check if there's an existing AND-refinement link
+                // find all "and refinement" links connected to fromNode other than newly created link
                 const existingLinks = new go.List();
                 fromNode.findLinksOutOf().all(function(l) {
                     if (l.category === "ANDRefinement" && l !== link) {
@@ -125,9 +134,7 @@ const HomePage = () => {
                     }
                 });
 
-
-                const toNodes = existingLinks?.toArray().map(l => l?.toNode);
-
+                // plane, arrowless refinement link props to connect junction node
                 const junctionLinkProps = {
                     category: "ANDRefinement",
                     type: "AND Refinement",
@@ -141,30 +148,30 @@ const HomePage = () => {
                     relinkableFrom: false
                 }
 
+                // if there is no existing "and refinement" link, do nothing, a normal link will be connected
                 if (existingLinks.count > 0) {
-
-                    const existingJunctionNode = toNodes?.find(n => n?.category === "Junction");
-                    const existingJunctionLink = existingLinks?.toArray()?.find(l => l?.toNode?.key === existingJunctionNode?.key);
                     
-                    if(existingJunctionNode && existingJunctionLink?.data?.fromArrow !== "Backward" && !existingFromLink) return;
+                    // if there is at least one "and refinement" link connected to fromNode (existingLinks.count > 0)
+                    // but since there is no "existingFromLink", fromNode is connected with its parent with a arrowless "and refinement" link
+                    // It means that fromNode has no children with "and refinement", so return again and connect a normal link
+                    if(!existingFromLink) return;
 
-                    if(existingJunctionNode && (!existingFromLink || existingFromNode?.category === "Junction")) {
-                        const junctionNode = existingFromLink && existingFromNode?.category === "Junction" ? existingFromNode : existingJunctionNode;
-                        diagramObject.model.addLinkData({ from: subjectToNode.key, to: junctionNode.key, ...junctionLinkProps });
+                    // if existingFromNode is a juntion node, it means that fromNode has children connected by a junction node
+                    // add a plane and arrowless link to existing junction node and remove newly created link
+                    if(existingFromNode?.category === "Junction") {
+                        diagramObject.model.addLinkData({ from: subjectToNode.key, to: existingFromNode.key, ...junctionLinkProps });
                         diagramObject.remove(link);
                         return;
                     }
 
-                    if(existingFromLink && !toNodes?.find(n => n?.key === existingFromNode?.key)) toNodes.push(existingFromNode);
-
-                    // create a new juction node
+                    // calculate a middle position for junction node
                     let centerPoint = { x: 0, y: 0 };
-                    [fromNode].concat([subjectToNode]).concat(toNodes)?.filter(n => n?.data?.category !== "Junction")?.forEach(n => {
+                    [fromNode, subjectToNode, existingFromNode]?.forEach(n => {
                         centerPoint.x = centerPoint.x + n?.location?.x;
                         centerPoint.y = centerPoint.y + n?.location?.y;
                     })
-                    centerPoint.x = centerPoint.x / (toNodes?.length + 2);
-                    centerPoint.y = centerPoint.y / (toNodes?.length + 2);
+                    centerPoint.x = centerPoint.x / 3;
+                    centerPoint.y = centerPoint.y / 3;
 
                     // Create a junction node
                     const junctionNodeData = {
@@ -174,18 +181,14 @@ const HomePage = () => {
                     diagramObject.model.addNodeData(junctionNodeData);
                     const junctionNode = diagramObject.findNodeForData(junctionNodeData);
 
+                    // add new links fro junction nodes
                     diagramObject.model.addLinkData({ from: fromNode.key, to: junctionNode.key, ...junctionLinkProps, fromArrow: "Backward" });
                     diagramObject.model.addLinkData({ from: subjectToNode.key, to: junctionNode.key, ...junctionLinkProps });
+                    diagramObject.model.addLinkData({ from: existingFromNode.key, to: junctionNode.key, ...junctionLinkProps });
 
-                    toNodes?.map(toNode => {
-                        return diagramObject.model.addLinkData({ from: toNode.key, to: junctionNode.key, ...junctionLinkProps });
-                    })
-
-                    if(existingFromLink) existingLinks.push(existingFromLink);
-
-                    existingLinks?.toArray()?.concat([link])?.forEach(l => {
-                        if(l?.data?.fromArrow === "Backward") diagramObject.remove(l);
-                    });
+                    // remove old and new "and refinement" links
+                    diagramObject.remove(existingFromLink);
+                    diagramObject.remove(link);
                 }
             
             }
