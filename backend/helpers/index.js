@@ -132,9 +132,53 @@ const refinementGoalRelationships = (fileName, model) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 };
 
+const mandatoryNodes = (fileName, model) => {
+    let content = ";;%%%%\n;Mandatory goals\n;%%%%\n";
+
+    model?.nodeDataArray?.forEach(node => {
+        if(node?.is_mandatory) {
+            content = content + `(assert ${node?.label})\n`;
+        }
+    });
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+};
+
+const precedenceRelationships = (fileName, model) => {
+    let content = ";;%%%%\n;Precedence relationships\n;%%%%\n";
+
+    model?.linkDataArray?.forEach(link => {
+        if(link?.type === "Precedence") {
+            const toNode = model?.nodeDataArray?.find(n => n?.key === link?.to);
+            const fromNode = model?.nodeDataArray?.find(n => n?.key === link?.from);
+
+            content = content + `(assert (=> ${fromNode?.label} ${toNode?.label}))\n`;
+        }
+    });
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+};
+
+const optimizeCriteria = (fileName) => {
+    let content = ";;%%\n;;Optimization:\n;;%%\n";
+
+    // do optimization criteria
+
+    content = content + "(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+}
+
 module.exports = {
     initFile,
     declareGoalsAndRefinements,
     closeWorld,
-    refinementGoalRelationships
+    refinementGoalRelationships,
+    mandatoryNodes,
+    precedenceRelationships,
+    optimizeCriteria
 }

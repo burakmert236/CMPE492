@@ -3,7 +3,10 @@ const {
     initFile,
     declareGoalsAndRefinements,
     closeWorld,
-    refinementGoalRelationships
+    refinementGoalRelationships,
+    mandatoryNodes,
+    precedenceRelationships,
+    optimizeCriteria
 } = require('../helpers');
 
 const optimize = async (req, res) => {
@@ -17,6 +20,10 @@ const optimize = async (req, res) => {
         declareGoalsAndRefinements(fileName, model);
         closeWorld(fileName, model);
         refinementGoalRelationships(fileName, model);
+        mandatoryNodes(fileName, model);
+        // do implemented nodes
+        precedenceRelationships(fileName, model);
+        optimizeCriteria(fileName);
 
         return res.status(httpStatus.OK).send();
     } catch (err) {
