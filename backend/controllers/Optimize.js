@@ -6,7 +6,8 @@ const {
     refinementGoalRelationships,
     mandatoryNodes,
     precedenceRelationships,
-    optimizeCriteria
+    optimizeCriteria,
+    runOptiMathSat
 } = require('../helpers');
 
 const optimize = async (req, res) => {
@@ -14,16 +15,19 @@ const optimize = async (req, res) => {
         let { model } = req.body;
         model = JSON.parse(model);
 
-        const fileName = "./model.smt2";
+        const inputFile = "./model.smt2";
+        const outputFile = "./solution.txt";
         
-        initFile(fileName);
-        declareGoalsAndRefinements(fileName, model);
-        closeWorld(fileName, model);
-        refinementGoalRelationships(fileName, model);
-        mandatoryNodes(fileName, model);
+        initFile(inputFile);
+        declareGoalsAndRefinements(inputFile, model);
+        closeWorld(inputFile, model);
+        refinementGoalRelationships(inputFile, model);
+        mandatoryNodes(inputFile, model);
         // do implemented nodes
-        precedenceRelationships(fileName, model);
-        optimizeCriteria(fileName);
+        precedenceRelationships(inputFile, model);
+        optimizeCriteria(inputFile);
+
+        runOptiMathSat(inputFile, outputFile);
 
         return res.status(httpStatus.OK).send();
     } catch (err) {
