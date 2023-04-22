@@ -107,7 +107,8 @@ const refinementGoalRelationships = (fileName, model) => {
             const toNode = model?.nodeDataArray?.find(n => n?.key === link?.to);
             const fromNode = model?.nodeDataArray?.find(n => n?.key === link?.from);
             
-            content = content + `(assert (and (= ${link?.label} (and ${toNode?.label} )) (=> ${link?.label} ${fromNode?.label} )))\n`;
+            if(fromNode?.label && toNode?.label)
+                content = content + `(assert (and (= ${link?.label} (and ${toNode?.label} )) (=> ${link?.label} ${fromNode?.label} )))\n`;
         }
     });
 
@@ -118,11 +119,13 @@ const refinementGoalRelationships = (fileName, model) => {
             });
             const parentNode = model?.nodeDataArray?.find(n => n?.key === parentLink?.from);
 
+            if(!parentNode) return;
+
             const childrenLinks = model?.linkDataArray?.filter(l => {
                 return l?.category === "ANDRefinement" && l?.fromArrow !== "Backward" && l?.to === node?.key;
             });
             const childrenNodes = model?.nodeDataArray?.filter(n => childrenLinks?.map(l => l?.from)?.includes(n?.key));
-            const childrenLabels = childrenNodes?.map(n => n?.label)?.join(" ");
+            const childrenLabels = childrenNodes?.map(n => n?.label)?.filter(n => !!n)?.join(" ");
 
             content = content + `(assert (and (= ${node?.label} (and ${childrenLabels} )) (=> ${node?.label} ${parentNode?.label} )))\n`;
         }
@@ -155,7 +158,8 @@ const precedenceRelationships = (fileName, model) => {
             const toNode = model?.nodeDataArray?.find(n => n?.key === link?.to);
             const fromNode = model?.nodeDataArray?.find(n => n?.key === link?.from);
 
-            content = content + `(assert (=> ${fromNode?.label} ${toNode?.label}))\n`;
+            if(fromNode?.label && toNode?.label)
+                content = content + `(assert (=> ${fromNode?.label} ${toNode?.label}))\n`;
         }
     });
 
