@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { spawn } = require('child_process');
 
 const initFile = (fileName) => {
     const content = ";; activate model generation\n(set-option :produce-models true)\n(set-option :opt.priority lex)\n\n";
@@ -173,6 +174,36 @@ const optimizeCriteria = (fileName) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 }
 
+const runOptiMathSat = (inputFile, outputFile) => {
+    // program outputs
+    let content = "";
+
+    // define the command to run OptiMathSat
+    const command = 'optimathsat/bin/optimathsat';
+
+    // define the arguments to pass to OptiMathSat
+    const args = [inputFile];
+
+    // spawn the OptiMathSat process with the input and output files as arguments
+    const optiMathSat = spawn(command, args);
+
+    // handle stdout and stderr output from OptiMathSat
+    optiMathSat.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+        content = content + data;
+    });
+
+    optiMathSat.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+    });
+
+    // // handle OptiMathSat exit code
+    optiMathSat.on('close', (code) => {
+        console.log(`OptiMathSat exited with code ${code}`);
+        fs.writeFileSync(outputFile, content);
+    });
+}
+
 module.exports = {
     initFile,
     declareGoalsAndRefinements,
@@ -180,5 +211,6 @@ module.exports = {
     refinementGoalRelationships,
     mandatoryNodes,
     precedenceRelationships,
-    optimizeCriteria
+    optimizeCriteria,
+    runOptiMathSat
 }
