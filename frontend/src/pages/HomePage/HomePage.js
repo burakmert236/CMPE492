@@ -145,7 +145,8 @@ const HomePage = () => {
                     toShortLength: 0,
                     reshapable: false,
                     relinkableTo: false,
-                    relinkableFrom: false
+                    relinkableFrom: false,
+                    selectable: false
                 }
 
                 // if there is no existing "and refinement" link, do nothing, a normal link will be connected
@@ -159,7 +160,18 @@ const HomePage = () => {
                     // if existingFromNode is a juntion node, it means that fromNode has children connected by a junction node
                     // add a plane and arrowless link to existing junction node and remove newly created link
                     if(existingFromNode?.category === "Junction") {
-                        diagramObject.model.addLinkData({ from: subjectToNode.key, to: existingFromNode.key, ...junctionLinkProps });
+                        let existingJunctionLink = false;
+                        subjectToNode.findLinksConnected().each(function(l) {
+                            if(l?.data?.to === existingFromNode?.key) {
+                                existingJunctionLink = true;
+                            }
+                        });
+
+                        // do not make duplicate juntion links
+                        if(!existingJunctionLink) {
+                            diagramObject.model.addLinkData({ from: subjectToNode.key, to: existingFromNode.key, ...junctionLinkProps });
+                        }
+
                         diagramObject.remove(link);
                         return;
                     }
