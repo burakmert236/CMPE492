@@ -128,7 +128,7 @@ const HomePage = () => {
 
                 // find all "and refinement" links connected to fromNode other than newly created link
                 const existingLinks = new go.List();
-                fromNode.findLinksOutOf().all(function(l) {
+                fromNode.findLinksOutOf().each(function(l) {
                     if (l.category === "ANDRefinement" && l !== link) {
                         existingLinks.add(l);
                     }
@@ -149,8 +149,12 @@ const HomePage = () => {
                     selectable: false
                 }
 
+                console.log(existingLinks.count)
+
                 // if there is no existing "and refinement" link, do nothing, a normal link will be connected
                 if (existingLinks.count > 0) {
+
+                    console.log(existingFromLink)
                     
                     // if there is at least one "and refinement" link connected to fromNode (existingLinks.count > 0)
                     // but since there is no "existingFromLink", fromNode is connected with its parent with a arrowless "and refinement" link
