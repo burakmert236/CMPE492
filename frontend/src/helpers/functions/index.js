@@ -122,11 +122,11 @@ export const createDiagramLinkTemplate = () => {
             curve: go.Link.Bezier,
             adjusting: go.Link.Stretch,
         },
-    
+
         new go.Binding("points").makeTwoWay(),
         new go.Binding("fromShortLength").makeTwoWay(),
         new go.Binding("toShortLength").makeTwoWay(),
-    
+
         $(go.Shape,  // the link path shape
             { 
                 isPanelMain: true, 
@@ -135,25 +135,40 @@ export const createDiagramLinkTemplate = () => {
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),
-            new go.Binding("stroke", "fromNode.category", (category) => {
-                return category === "Exclusion" ? "red" : "black";
+            new go.Binding("stroke", "fromNode", (fromNode) => {
+                if (fromNode.category === "Exclusion") {
+                    return "red";
+                }
+                return "black";
             }).ofObject(),
         ),
-    
-        $(go.Shape,  // the arrowhead
+
+        $(go.Shape,  // the arrowhead at the end of the link
             { toArrow: "Standard", stroke: null, scale: 2 },
             new go.Binding("toArrow", "toArrow"),
             new go.Binding("stroke", "color"),
             new go.Binding("fill", "color"),
             new go.Binding("visible", "toArrow", type => type !== "null"),
+            new go.Binding("visible", "fromNode", (fromNode) => {
+                if (fromNode.category === "Exclusion") {
+                    return false;
+                }
+                return true;
+            }).ofObject(),
         ),
 
-        $(go.Shape,  // the arrowhead
+        $(go.Shape,  // the arrowhead at the beginning of the link
             { fromArrow: "Standard", stroke: null, scale: 2 },
             new go.Binding("fromArrow", "fromArrow"),
             new go.Binding("stroke", "color"),
             new go.Binding("fill", "color"),
             new go.Binding("visible", "fromArrow", type => type !== "null"),
+            new go.Binding("visible", "fromNode", (fromNode) => {
+                if (fromNode.category === "Exclusion") {
+                    return false;
+                }
+                return true;
+            }).ofObject(),
         ),
 
         $(go.Panel, "Auto",
@@ -178,7 +193,10 @@ export const createDiagramLinkTemplate = () => {
                 new go.Binding("editable", "type", type => ["C+", "C-", "V+", "V-"].includes(type?.slice(0, 2))),
                 new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
                 new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 10pt helvetica, arial, sans-serif"),
-
+                // Add the following binding to hide the text block for links coming from exclusion nodes
+                new go.Binding("visible", "fromNode", (fromNode) => {
+                    return fromNode.category !== "Exclusion";
+                }).ofObject(),
             )
         )
     );
