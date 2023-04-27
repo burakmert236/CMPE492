@@ -4,12 +4,13 @@ const $ = go.GraphObject.make;
 export const createPaletteNodeTemplate = () => {
     return $(go.Node, "Vertical",
         { locationObjectName: "TB", locationSpot: go.Spot.Center },
-        $(go.Shape, "Terminator",
+        $(go.Shape,
             { 
                 desiredSize: new go.Size(65, 25),
                 strokeDashArray: null,
                 fill: $(go.Brush, "Linear", { 0.0: "white", 1.0: "gray" }),
             },
+            new go.Binding("figure", "shape"),
             new go.Binding("fill", "color"),
             new go.Binding("width", "width"),
             new go.Binding("height", "height")
@@ -50,8 +51,9 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
         { resizable: true, resizeObjectName: "PANEL", toLinkable: false, fromLinkable: false },
 
         new go.Binding("location", "location").makeTwoWay(),
+        new go.Binding("text", "key").makeTwoWay(),
 
-        $(go.Shape, "Terminator",
+        $(go.Shape,
             {
                 name: "SHAPE", fill: "#000", strokeWidth: 1,
                 stroke: "#000",
@@ -59,28 +61,31 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                 fromLinkable: true,
                 toLinkable: true,
                 cursor: "pointer",
-                minSize: new go.Size(120, 50),
             },
+            new go.Binding("width", "width"),
+            new go.Binding("height", "height"),
+            new go.Binding("minSize", "minSize"),
+            new go.Binding("figure", "shape"),
             new go.Binding("fill", "color"),
         ),
 
         $(go.Panel, "Auto",  
             { defaultAlignment: go.Spot.Center },
 
-            $(go.Shape, "Terminator",
+            $(go.Shape,
                 {
                     fill: "red",  // default color
                     strokeWidth: 1,
                     name: "PANEL",
                     minSize: new go.Size(120, 50),
                 },
+                new go.Binding("figure", "shape"),
                 new go.Binding("fill", "color"),
             ),  // shape.fill = data.color
 
             $(go.TextBlock,
                 { 
                     name: "TEXT",
-                    text: "Goal",
                     font: "bold 14pt sans-serif",
                     editable: false,
                     isMultiline: true,
@@ -98,6 +103,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                     visible: true,
                     margin: new go.Margin(0, 0, 0, 10)
                 },
+                new go.Binding("visible", "visible"),
             ),
         ),  // textblock.text = data.key
     );
@@ -129,6 +135,9 @@ export const createDiagramLinkTemplate = () => {
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),
+            new go.Binding("stroke", "fromNode", (fromNode) => {
+                return fromNode.category === "Exclusion" ? "red" : "black";
+            }).ofObject(),
         ),
     
         $(go.Shape,  // the arrowhead
@@ -176,7 +185,7 @@ export const createDiagramLinkTemplate = () => {
 };
 
 export const junctionNodeTemplate = () => {
-    return $(go.Node, "Auto", 
+    return $(go.Node, "Auto",
                 {
                     isTreeExpanded: false,
                     deletable: true
@@ -185,6 +194,37 @@ export const junctionNodeTemplate = () => {
                 $(go.Shape, "Circle", 
                     { width: 10, height: 10, fill: "black", stroke: "black"},
                 ),
+            )
+}
+
+export const exclusionNodeTemplate = () => {
+    
+    return $(go.Node, "Auto",
+                {
+                    movable: true,  
+                    deletable: true,
+                    fromLinkable: true,
+                    selectable: true,
+                    resizable: true,
+                    rotatable: true,
+                    toLinkable: true,
+                    category: "Exclusion" // Add this line
+                },
+                new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                new go.Binding("location").makeTwoWay(),
+                new go.Binding("key", "key").makeTwoWay(),
+                $(go.Shape, "Circle", 
+                    { 
+                    strokeWidth: 1,
+                    stroke: "black",
+                    width: 30, height: 30, 
+                    fill: "red",
+                    fromLinkable: true,
+                    toLinkable: true,
+                },
+                ),
+                
+                
             )
 }
 

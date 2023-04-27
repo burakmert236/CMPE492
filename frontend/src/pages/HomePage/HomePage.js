@@ -19,7 +19,10 @@ import {
     createPaletteLinkTemplate, 
     createPaletteNodeTemplate,
     detectCycleForSpecificLinkType,
-    junctionNodeTemplate
+    junctionNodeTemplate,
+    exclusionNodeTemplate,
+    createExclusionNodeTemplate,
+    createPaletteExclusionNodeTemplate,
 } from "../../helpers/functions";
 
 import "./HomePage.scss";
@@ -55,11 +58,30 @@ const HomePage = () => {
 
 		// initial diagram node temaplate
         diagram.nodeTemplate = createDiagramNodeTemplate(setSelectedNode);
-
+        
         diagram.nodeTemplateMap.add("Junction", junctionNodeTemplate());
-
+        diagram.nodeTemplateMap.add("Exclusion", exclusionNodeTemplate());
 		// initial diagram link template
         diagram.linkTemplate = createDiagramLinkTemplate(setSelectedNode);
+        function linkColorConverter(fromNodeType) {
+            if (fromNodeType === "Exclusion") {
+              return "red";
+            } else {
+              return "black";
+            }
+          }
+          diagram.linkTemplate =
+            $(go.Link,
+                { curve: go.Link.Bezier, adjusting: go.Link.Stretch, reshapable: true, relinkableFrom: true, relinkableTo: true },
+                $(go.Shape,
+                { strokeWidth: 1.5 },
+                new go.Binding("stroke", "fromNode.nodeType", linkColorConverter).ofObject() // Update this line
+                ),
+                $(go.Shape, { toArrow: "Standard", strokeWidth: 0 },
+                new go.Binding("fill", "fromNode.nodeType", linkColorConverter).ofObject(), // Add this line
+                new go.Binding("stroke", "fromNode.nodeType", linkColorConverter).ofObject() // Add this line
+                )
+            );
 
         diagram.linkTemplateMap.add("ANDRefinement", createDiagramLinkTemplate(setSelectedNode))
             
@@ -239,7 +261,7 @@ const HomePage = () => {
                     let nodeCount = 0;
                     // Iterate through all the nodes in the diagram
                     diagramObject.nodes.each(function (node) {
-                        if(node?.data?.category !== "Junction") nodeCount = nodeCount + 1;
+                        if(!(node?.data?.category === "Junction" || node?.data?.category === "Exclusion")) nodeCount = nodeCount + 1;
                     });
 
                     diagramObject.model.setDataProperty(obj.data, "text", "Goal " + nodeCount);
