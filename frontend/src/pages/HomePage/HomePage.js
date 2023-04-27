@@ -21,8 +21,6 @@ import {
     detectCycleForSpecificLinkType,
     junctionNodeTemplate,
     exclusionNodeTemplate,
-    createExclusionNodeTemplate,
-    createPaletteExclusionNodeTemplate,
 } from "../../helpers/functions";
 
 import "./HomePage.scss";

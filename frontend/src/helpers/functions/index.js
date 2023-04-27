@@ -135,8 +135,8 @@ export const createDiagramLinkTemplate = () => {
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),
-            new go.Binding("stroke", "fromNode", (fromNode) => {
-                return fromNode.category === "Exclusion" ? "red" : "black";
+            new go.Binding("stroke", "fromNode.category", (category) => {
+                return category === "Exclusion" ? "red" : "black";
             }).ofObject(),
         ),
     
@@ -198,35 +198,46 @@ export const junctionNodeTemplate = () => {
 }
 
 export const exclusionNodeTemplate = () => {
-    
-    return $(go.Node, "Auto",
-                {
-                    movable: true,  
-                    deletable: true,
-                    fromLinkable: true,
-                    selectable: true,
-                    resizable: true,
-                    rotatable: true,
-                    toLinkable: true,
-                    category: "Exclusion" // Add this line
-                },
-                new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-                new go.Binding("location").makeTwoWay(),
-                new go.Binding("key", "key").makeTwoWay(),
-                $(go.Shape, "Circle", 
-                    { 
-                    strokeWidth: 1,
-                    stroke: "black",
-                    width: 30, height: 30, 
-                    fill: "red",
-                    fromLinkable: true,
-                    toLinkable: true,
-                },
-                ),
-                
-                
-            )
-}
+    return $(
+      go.Node,
+      "Auto",
+      {
+        locationObjectName: "main",
+        locationSpot: go.Spot.Center,
+        selectionObjectName: "main",
+        movable: true,
+        deletable: true,
+        fromLinkable: true,
+        selectable: true,
+        resizable: true,
+        rotatable: true,
+        toLinkable: true,
+        category: "Exclusion",
+        fromLinkableDuplicates: false,
+        toLinkableDuplicates: false,
+      },
+      new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
+        go.Point.stringify
+      ),
+      new go.Binding("location").makeTwoWay(),
+      new go.Binding("key", "key").makeTwoWay(),
+      $(go.Panel, "Auto", { name: "main" },
+        $(go.Shape, "Circle", {
+          strokeWidth: 1,
+          stroke: "black",
+          width: 30,
+          height: 30,
+          fill: "red",
+        })
+      ),
+      new go.Binding("fromSpot", "fromSpot", go.Spot.parse).makeTwoWay(
+        go.Spot.stringify
+      ),
+      new go.Binding("toSpot", "toSpot", go.Spot.parse).makeTwoWay(
+        go.Spot.stringify
+      )
+    );
+  };
 
 export const createPaletteLinkTemplate = () => {
     return $(go.Link,
