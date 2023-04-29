@@ -5,6 +5,10 @@ const {
     closeWorld,
     refinementGoalRelationships,
     mandatoryNodes,
+    implementedNodes,
+    contributions,
+    goalAttributes,
+    leafAndRootNodes,
     precedenceRelationships,
     optimizeCriteria,
     runOptiMathSat
@@ -23,8 +27,12 @@ const optimize = async (req, res) => {
         closeWorld(inputFile, model);
         refinementGoalRelationships(inputFile, model);
         mandatoryNodes(inputFile, model);
-        // do implemented nodes
+        implementedNodes(inputFile, model);
         precedenceRelationships(inputFile, model);
+        contributions(inputFile, model);
+        goalAttributes(inputFile, model);
+        // do exclusions
+        leafAndRootNodes(inputFile, model);
         optimizeCriteria(inputFile);
 
         runOptiMathSat(inputFile, outputFile);

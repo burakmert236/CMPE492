@@ -13,6 +13,7 @@ const declareGoalsAndRefinements = (fileName, model) => {
     let refinementLinks = [];
     let junctionNodes = [];
     let signleAndRefinementLinks = [];
+    let contributionLinks = [];
 
     // get "or refinement" and single "and refinement" links
     model.linkDataArray = model?.linkDataArray?.map((link) => {
@@ -52,7 +53,34 @@ const declareGoalsAndRefinements = (fileName, model) => {
         }
     });
 
-    const combined = [...goalNodes, ...refinementLinks, ...junctionNodes, ...signleAndRefinementLinks];
+    // get contribution links
+    model.linkDataArray = model?.linkDataArray?.map(link => {
+        const contributionTypes = ["C-", "C+", "V-", "V+"];
+        let valueContributionCount = 0;
+        let costContributionCount = 0;
+
+        if(contributionTypes.includes(link.type)) {
+            let linkLabel = "";
+            if(link.type === "V-" || link.type === "V+") {
+                valueContributionCount += 1;
+                linkLabel = `VCL${valueContributionCount}`
+            }
+            if(link.type === "C-" || link.type === "C+") {
+                costContributionCount += 1;
+                linkLabel = `CCL${costContributionCount}`
+            }
+
+            const contributionId = link.type === "V-" ? "NVC" : link.type === "V+" ? "PVC" : link.type === "C-" ? "NCC" : "PCC";
+
+            const updatedLink = { ...link, label: linkLabel, contribution_id: contributionId };
+            contributionLinks.push(updatedLink);
+            return updatedLink;
+        } else {
+            return link;
+        }
+    });
+
+    const combined = [...goalNodes, ...refinementLinks, ...junctionNodes, ...signleAndRefinementLinks, ...contributionLinks];
 
     combined?.forEach(item => {
         const line = `(declare-fun ${item?.label} () Bool)\n`;
@@ -150,6 +178,128 @@ const mandatoryNodes = (fileName, model) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 };
 
+const implementedNodes = (fileName, model) => {
+    let content = ";;%%%%\n;Implemented goals\n;%%%%\n";
+
+    model?.nodeDataArray?.forEach(node => {
+        if(node?.is_implemented && !node?.is_mandatory) {
+            content = content + `(assert ${node?.label})\n`;
+        }
+    });
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+};
+
+const contributions = (fileName, model) => {
+    let content = ";;%%%%\n;Contributions\n;%%%%\n";
+
+    model?.linkDataArray?.forEach(link => {
+        if(link.contribution_id) {
+            const fromNode = model?.nodeDataArray?.find(n => n?.key === link?.from);
+            const toNode = model?.nodeDataArray?.find(n => n?.key === link?.to);
+
+            const linkWeight = link.value || 1;
+
+            content = content + `(assert (= ${link.label} (and ${fromNode?.label} ${toNode?.label})))\n`;
+            content = content + `(assert-soft (not ${link.label}) :weight ${linkWeight} :id ${link.contribution_id})\n`;
+        }
+    });
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+}
+
+const goalAttributes = (fileName, model) => {
+    let content = ";;%%%%\n;Goal Attributes\n;%%%%\n";
+
+    model.nodeDataArray?.forEach(node => {
+        if(node.label.slice(0, 1) === "G") {
+            content = content + `(assert-soft (not ${node.label}) :weight ${node.cost || 1} :id cost)\n`;
+            content = content + `(assert-soft (not ${node.label}) :weight ${node.value || 1} :id value)\n`;
+
+            if(node?.attributes?.length > 0) {
+                node?.attributes?.forEach(attr => {
+                    if(attr?.type === "integer") {
+                        content = content + `(assert-soft (not ${node.label}) :weight ${attr.value || 1} :id ${attr.key})\n`;
+                    }
+                })
+            }
+        }
+    });
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+}
+
+const leafAndRootNodes = (fileName, model) => {
+    
+    const leafNodeLabels = [];
+    const rootNodeLabels = []
+
+    model.nodeDataArray?.forEach(node => {
+        if(node.label.slice(0, 1) === "G") {
+            let parentRefinementLink = null;
+            let parentSingleAndrefinementLink = null;
+            let parentJunctionLink = null;
+
+            let childRefinementLink = null;
+            let childSingleAndRefinementLink = null;
+            let childJunctionLink = null;
+
+            for (const l of model.linkDataArray) {
+                if(l.type === "Refinement" && l.to === node.key && l.fromArrow === "BackwardTriangle" && l.toArrow === "") {
+                    parentRefinementLink = l;
+                }
+                if(l.type === "AND Refinement" && l.to === node.key && l.fromArrow === "Backward" && l.toArrow === "") {
+                    parentSingleAndrefinementLink = l;
+                }
+                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "null" && l.toArrow === "null") {
+                    parentJunctionLink = l;
+                }
+
+                if(l.type === "Refinement" && l.from === node.key && l.fromArrow === "BackwardTriangle" && l.toArrow === "") {
+                    childRefinementLink = l;
+                }
+                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "Backward" && l.toArrow === "") {
+                    childSingleAndRefinementLink = l;
+                }
+                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "Backward" && l.toArrow === "null") {
+                    childJunctionLink = l;
+                }
+            }
+
+            if(
+                (parentRefinementLink || parentSingleAndrefinementLink || parentJunctionLink) &&
+                (!(childRefinementLink || childSingleAndRefinementLink || childJunctionLink))
+            ) {
+                leafNodeLabels.push(node.label);
+            }
+
+            if(!(parentRefinementLink || parentSingleAndrefinementLink || parentJunctionLink)) {
+                rootNodeLabels.push(node.label);
+            }
+        }
+    });
+
+    let content = ";;%%%%\n;Leaf Nodes\n;%%%%\n";
+    leafNodeLabels.forEach(l => {
+        content = content + `(assert-soft (not ${l} ) :id sat_tasks)\n`;
+    });
+
+    content = content + "\n;;%%%%\n;Root Nodes\n;%%%%\n";
+    rootNodeLabels.forEach(l => {
+        content = content + `(assert-soft (not ${l} ) :id unsat_requirements)\n`;
+    });
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+}
+
 const precedenceRelationships = (fileName, model) => {
     let content = ";;%%%%\n;Precedence relationships\n;%%%%\n";
 
@@ -214,6 +364,10 @@ module.exports = {
     closeWorld,
     refinementGoalRelationships,
     mandatoryNodes,
+    implementedNodes,
+    contributions,
+    goalAttributes,
+    leafAndRootNodes,
     precedenceRelationships,
     optimizeCriteria,
     runOptiMathSat
