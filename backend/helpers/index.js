@@ -1,8 +1,9 @@
 const fs = require('fs');
 const { spawn } = require('child_process');
 
-const initFile = (fileName) => {
-    const content = ";; activate model generation\n(set-option :produce-models true)\n(set-option :opt.priority lex)\n\n";
+const initFile = (fileName, type) => {
+    type = ["lex", "box", "pareto"]?.includes(type) ? type : "lex";
+    const content = `;; activate model generation\n(set-option :produce-models true)\n(set-option :opt.priority ${type})\n\n`;
     fs.writeFileSync(fileName, content);
 };
 
@@ -318,12 +319,44 @@ const precedenceRelationships = (fileName, model) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 };
 
-const optimizeCriteria = (fileName) => {
+const optimizeCriteria = (fileName, criteria) => {
     let content = ";;%%\n;;Optimization:\n;;%%\n";
 
-    // do optimization criteria
+    criteria?.forEach(criterion => {
+        content += `(declare-fun ${criterion?.key}.auto () Real)\n`;
+        content += `(assert (= ${criterion?.key}.auto (- ${criterion?.key} 0)))\n`;
+    });
 
-    content = content + "(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
+    content += "\n";
+
+    criteria?.forEach(criterion => {
+        if(criterion?.min_range) {
+            content += `(assert (and (> ${criterion?.key}.auto ${criterion?.min_range})))\n`;
+        }
+        if(criterion?.max_range) {
+            content += `(assert (and (< ${criterion?.key}.auto ${criterion?.max_range})))\n`;
+        }
+    });
+
+    content += "\n";
+
+    const minimizationKeys = criteria?.filter(c => !c?.disabled && c?.min === true)?.map(c => c?.key);
+    const maximizationKeys = criteria?.filter(c => !c?.disabled && c?.min === false)?.map(c => c?.key);
+
+    if(minimizationKeys?.length === 1) {
+        content += `(minimize ${minimizationKeys[0]}.auto)\n`;
+    } else if(minimizationKeys?.length > 1) {
+        content += `(minimize (+ ${minimizationKeys?.map(i => `${i}.auto`).join(" ")}))\n`;
+    }
+
+    if(maximizationKeys?.length === 1) {
+        content += `(maximize ${maximizationKeys[0]}.auto)\n`;
+    } else if(maximizationKeys?.length > 1) {
+        content += `(maximize (+ ${maximizationKeys?.map(i => `${i}.auto`).join(" ")}))\n`;
+    }
+
+    content += "\n(maximize (+ NCC PVC))\n";
+    content += "(minimize unsat_requirements)\n(minimize sat_tasks)\n(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 }

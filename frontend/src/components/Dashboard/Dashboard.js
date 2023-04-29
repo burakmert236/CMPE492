@@ -82,8 +82,8 @@ const Dashboard = ({ selectedNode, diagram }) => {
       diagram.model.setDataProperty(selectedNode?.data, "attributes", []);
     }
 
-    if(attributes?.find(i => i.key === key) || key === "Cost" || key === "Value") {
-      alert(`Attribute with the key "${key}" already exists.`)
+    if(attributes?.find(i => i.key === capitalize(key)) || key === "Cost" || key === "Value") {
+      alert(`Attribute with the key "${capitalize(key)}" already exists.`)
       return;
     }
     if(type === "Number" && isNaN(+value)) {
@@ -185,7 +185,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
             </div>
           </div>
           
-          <div>
+          <div style={{ maxHeight: "110px", overflow: "scroll", margin: "5px 0" }}>
             {attributes?.map((attr) => (
               <div key={attr.key} className="new-single-line">
                 <span>{capitalize(attr.key)}</span>

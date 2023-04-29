@@ -16,13 +16,13 @@ const {
 
 const optimize = async (req, res) => {
     try {
-        let { model } = req.body;
+        let { model, criteria, type } = req.body;
         model = JSON.parse(model);
 
         const inputFile = "./model.smt2";
         const outputFile = "./solution.txt";
         
-        initFile(inputFile);
+        initFile(inputFile, type);
         declareGoalsAndRefinements(inputFile, model);
         closeWorld(inputFile, model);
         refinementGoalRelationships(inputFile, model);
@@ -33,7 +33,7 @@ const optimize = async (req, res) => {
         goalAttributes(inputFile, model);
         // do exclusions
         leafAndRootNodes(inputFile, model);
-        optimizeCriteria(inputFile);
+        optimizeCriteria(inputFile, criteria);
 
         runOptiMathSat(inputFile, outputFile);
 

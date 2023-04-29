@@ -25,7 +25,7 @@ const OptimizeDropdown = ({ diagram }) => {
     ]);
 
     const handleOptimize = () => {
-        optimize(diagram.model, criteriaAttributes)
+        optimize(diagram.model, criteriaAttributes, optimizationType)
             .then(res => console.log(res))
             .catch(res => console.log("err", res))
     }
