@@ -12,6 +12,10 @@
         font-size: 20px;
         font-weight: 600;
         cursor: pointer;
+
+        .settings-button {
+            margin-left: 10px;
+        }
     }
 }
 
@@ -59,4 +63,63 @@
     &:hover {
         color: red;
     }
+}
+
+.popup-container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: scroll;
+    max-height: 60vh;
+
+    .optimization-type-row {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .optimization-type {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+
+        .attributes {
+            display: flex;
+            flex-direction: column;
+
+            .attribute {
+                display: grid;
+                grid-template-columns: 3.5fr 1fr 2fr 12fr 2fr;
+                margin: 7px 0;
+                border: 0.5px solid rgb(224, 224, 224);
+                border-radius: 5px;
+                padding: 10px 15px;
+                gap: 10px;
+
+                .trash-button {
+                    color: red;
+                }
+
+                .label {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .attribute-switch {
+                    padding: 0 10px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .attribute-range {
+                    padding: 0 0 0 2rem;
+                }
+            }
+        }
+    }
+}
+
+.bold {
+    font-weight: 600;
 }

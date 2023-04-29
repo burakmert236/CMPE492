@@ -94,10 +94,10 @@ const Dashboard = ({ selectedNode, diagram }) => {
       alert(`The name of the attribute cannot be empty.`)
       return;
     }
-    diagram.model.setDataProperty(selectedNode?.data, "attributes", [...selectedNode?.data?.attributes, {key: key, value: value, type: type}]);
-    setAttributes(a => [...(a || []), {key: key, value: value, type: type}]);
+    diagram.model.setDataProperty(selectedNode?.data, "attributes", [...selectedNode?.data?.attributes, {key: capitalize(key), value: value, type: type}]);
+    setAttributes(a => [...(a || []), {key: capitalize(key), value: value, type: type}]);
 
-    dispatch(setStateAttributes({ attribute: { key: key, value: value, type: type }, func: "add"}));
+    dispatch(setStateAttributes({ attribute: { key: capitalize(key), value: value, type: type }, func: "add"}));
 
     toggleInput();
   };
