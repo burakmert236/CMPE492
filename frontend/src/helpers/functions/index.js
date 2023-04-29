@@ -53,8 +53,9 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
 
         $(go.Shape, "Terminator",
             {
-                name: "SHAPE", fill: "#000", strokeWidth: 1,
+                name: "SHAPE", fill: "#000",
                 stroke: "#000",
+                strokeWidth: 3,
                 portId: "",  // this Shape is the Node's port, not the whole Node
                 fromLinkable: true,
                 toLinkable: true,
@@ -62,6 +63,12 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                 minSize: new go.Size(120, 50),
             },
             new go.Binding("fill", "color"),
+            new go.Binding("stroke", "is_implemented", is_implemented => {
+                return is_implemented ? "#077709" : "#000"
+            }),
+            new go.Binding("strokeWidth", "is_implemented", is_implemented => {
+                return is_implemented ? 8 : 3
+            }),
         ),
 
         $(go.Panel, "Auto",  
@@ -70,11 +77,18 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
             $(go.Shape, "Terminator",
                 {
                     fill: "red",  // default color
-                    strokeWidth: 1,
+                    stroke: "#000",
+                    strokeWidth: 2,
                     name: "PANEL",
                     minSize: new go.Size(120, 50),
                 },
                 new go.Binding("fill", "color"),
+                new go.Binding("stroke", "is_mandatory", is_mandatory => {
+                    return is_mandatory ? "#D41c00" : "#000"
+                }),
+                new go.Binding("strokeWidth", "is_mandatory", is_mandatory => {
+                    return is_mandatory ? 4 : 2
+                })
             ),  // shape.fill = data.color
 
             $(go.TextBlock,
