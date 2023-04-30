@@ -216,46 +216,37 @@ export const junctionNodeTemplate = () => {
 }
 
 export const exclusionNodeTemplate = () => {
-    return $(
-      go.Node,
-      "Auto",
-      {
-        locationObjectName: "main",
-        locationSpot: go.Spot.Center,
-        selectionObjectName: "main",
-        movable: true,
-        deletable: true,
-        fromLinkable: true,
-        selectable: true,
-        resizable: true,
-        rotatable: true,
-        toLinkable: true,
-        category: "Exclusion",
-        fromLinkableDuplicates: false,
-        toLinkableDuplicates: false,
-      },
-      new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
-        go.Point.stringify
-      ),
-      new go.Binding("location").makeTwoWay(),
-      new go.Binding("key", "key").makeTwoWay(),
-      $(go.Panel, "Auto", { name: "main" },
-        $(go.Shape, "Circle", {
-          strokeWidth: 1,
-          stroke: "black",
-          width: 30,
-          height: 30,
-          fill: "red",
-        })
-      ),
-      new go.Binding("fromSpot", "fromSpot", go.Spot.parse).makeTwoWay(
-        go.Spot.stringify
-      ),
-      new go.Binding("toSpot", "toSpot", go.Spot.parse).makeTwoWay(
-        go.Spot.stringify
-      )
-    );
-  };
+    
+    return $(go.Node, "Auto",
+                {
+                    locationObjectName: "main",
+                    locationSpot: go.Spot.Center,
+                    selectionObjectName: "main",
+                    movable: true,  
+                    deletable: true,
+                    fromLinkable: true,
+                    selectable: true,
+                    resizable: true,
+                    rotatable: true,
+                    toLinkable: false, // Disable linking to this node
+                    category: "Exclusion" 
+                },
+                new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                new go.Binding("location").makeTwoWay(),
+                new go.Binding("key", "key").makeTwoWay(),
+                $(go.Shape, "Circle", 
+                    { 
+                    strokeWidth: 1,
+                    stroke: "black",
+                    width: 30, height: 30, 
+                    fill: "red",
+                    fromLinkable: true,
+                    toLinkable: false, // Disable linking to this shape
+                },
+                ),
+    )
+}
+
 
 export const createPaletteLinkTemplate = () => {
     return $(go.Link,

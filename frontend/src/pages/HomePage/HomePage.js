@@ -66,7 +66,8 @@ const HomePage = () => {
         diagram.linkTemplateMap.add("ANDRefinement", createDiagramLinkTemplate(setSelectedNode))
             
         diagram.model = new go.GraphLinksModel();
-
+        
+          
         setDiagramObject(diagram);
         
     }, []);
