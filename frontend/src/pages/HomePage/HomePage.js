@@ -103,6 +103,18 @@ const HomePage = () => {
             }
         }
 
+        const exclusionLinkCheck = (e) => {
+            const link = e.subject;
+            const fromNode = link?.fromNode;
+            const toNode = link?.toNode;
+            if(fromNode.category === "Exclusion" || toNode.category === "Exclusion"){
+                if(link.category){
+                    diagramObject.remove(link);
+                    
+                }
+            }
+        }
+
         const junctionConstruction = (e) => {
             const link = e.subject;
             if (link.category === "ANDRefinement") {
@@ -197,6 +209,7 @@ const HomePage = () => {
         const linkEventListener = (e) => {
             cycleDetectFunction(e);
             junctionConstruction(e);
+            exclusionLinkCheck(e);
         }
 
         diagramObject.addDiagramListener("LinkDrawn", linkEventListener);

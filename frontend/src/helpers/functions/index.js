@@ -122,7 +122,7 @@ export const createDiagramLinkTemplate = () => {
             curve: go.Link.Bezier,
             adjusting: go.Link.Stretch,
         },
-
+        //new go.Binding("type").makeTwoWay(),
         new go.Binding("points").makeTwoWay(),
         new go.Binding("fromShortLength").makeTwoWay(),
         new go.Binding("toShortLength").makeTwoWay(),
@@ -177,6 +177,9 @@ export const createDiagramLinkTemplate = () => {
                 { fill: "#fff", stroke: null },
                 new go.Binding("fill", "color"),
                 new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
+                new go.Binding("visible", "fromNode", (fromNode) => {
+                    return fromNode.category !== "Exclusion";
+                }).ofObject(),
             ),
 
             $(go.TextBlock,
