@@ -4,12 +4,13 @@ const $ = go.GraphObject.make;
 export const createPaletteNodeTemplate = () => {
     return $(go.Node, "Vertical",
         { locationObjectName: "TB", locationSpot: go.Spot.Center },
-        $(go.Shape, "Terminator",
+        $(go.Shape,
             { 
                 desiredSize: new go.Size(65, 25),
                 strokeDashArray: null,
                 fill: $(go.Brush, "Linear", { 0.0: "white", 1.0: "gray" }),
             },
+            new go.Binding("figure", "shape"),
             new go.Binding("fill", "color"),
             new go.Binding("width", "width"),
             new go.Binding("height", "height")
@@ -50,8 +51,9 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
         { resizable: true, resizeObjectName: "PANEL", toLinkable: false, fromLinkable: false },
 
         new go.Binding("location", "location").makeTwoWay(),
+        new go.Binding("text", "key").makeTwoWay(),
 
-        $(go.Shape, "Terminator",
+        $(go.Shape,
             {
                 name: "SHAPE", fill: "#000",
                 stroke: "#000",
@@ -60,8 +62,11 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                 fromLinkable: true,
                 toLinkable: true,
                 cursor: "pointer",
-                minSize: new go.Size(120, 50),
             },
+            new go.Binding("width", "width"),
+            new go.Binding("height", "height"),
+            new go.Binding("minSize", "minSize"),
+            new go.Binding("figure", "shape"),
             new go.Binding("fill", "color"),
             new go.Binding("stroke", "is_implemented", is_implemented => {
                 return is_implemented ? "#077709" : "#000"
@@ -74,7 +79,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
         $(go.Panel, "Auto",  
             { defaultAlignment: go.Spot.Center },
 
-            $(go.Shape, "Terminator",
+            $(go.Shape,
                 {
                     fill: "red",  // default color
                     stroke: "#000",
@@ -82,6 +87,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                     name: "PANEL",
                     minSize: new go.Size(120, 50),
                 },
+                new go.Binding("figure", "shape"),
                 new go.Binding("fill", "color"),
                 new go.Binding("stroke", "is_mandatory", is_mandatory => {
                     return is_mandatory ? "#D41c00" : "#000"
@@ -94,7 +100,6 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
             $(go.TextBlock,
                 { 
                     name: "TEXT",
-                    text: "Goal",
                     font: "bold 14pt sans-serif",
                     editable: false,
                     isMultiline: true,
@@ -112,6 +117,7 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                     visible: true,
                     margin: new go.Margin(0, 0, 0, 10)
                 },
+                new go.Binding("visible", "visible"),
             ),
         ),  // textblock.text = data.key
     );
@@ -130,11 +136,11 @@ export const createDiagramLinkTemplate = () => {
             curve: go.Link.Bezier,
             adjusting: go.Link.Stretch,
         },
-    
+        //new go.Binding("type").makeTwoWay(),
         new go.Binding("points").makeTwoWay(),
         new go.Binding("fromShortLength").makeTwoWay(),
         new go.Binding("toShortLength").makeTwoWay(),
-    
+
         $(go.Shape,  // the link path shape
             { 
                 isPanelMain: true, 
@@ -143,22 +149,40 @@ export const createDiagramLinkTemplate = () => {
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),
+            new go.Binding("stroke", "fromNode", (fromNode) => {
+                if (fromNode.category === "Exclusion") {
+                    return "red";
+                }
+                return "black";
+            }).ofObject(),
         ),
-    
-        $(go.Shape,  // the arrowhead
+
+        $(go.Shape,  // the arrowhead at the end of the link
             { toArrow: "Standard", stroke: null, scale: 2 },
             new go.Binding("toArrow", "toArrow"),
             new go.Binding("stroke", "color"),
             new go.Binding("fill", "color"),
             new go.Binding("visible", "toArrow", type => type !== "null"),
+            new go.Binding("visible", "fromNode", (fromNode) => {
+                if (fromNode.category === "Exclusion") {
+                    return false;
+                }
+                return true;
+            }).ofObject(),
         ),
 
-        $(go.Shape,  // the arrowhead
+        $(go.Shape,  // the arrowhead at the beginning of the link
             { fromArrow: "Standard", stroke: null, scale: 2 },
             new go.Binding("fromArrow", "fromArrow"),
             new go.Binding("stroke", "color"),
             new go.Binding("fill", "color"),
             new go.Binding("visible", "fromArrow", type => type !== "null"),
+            new go.Binding("visible", "fromNode", (fromNode) => {
+                if (fromNode.category === "Exclusion") {
+                    return false;
+                }
+                return true;
+            }).ofObject(),
         ),
 
         $(go.Panel, "Auto",
@@ -167,6 +191,9 @@ export const createDiagramLinkTemplate = () => {
                 { fill: "#fff", stroke: null },
                 new go.Binding("fill", "color"),
                 new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
+                new go.Binding("visible", "fromNode", (fromNode) => {
+                    return fromNode.category !== "Exclusion";
+                }).ofObject(),
             ),
 
             $(go.TextBlock,
@@ -183,14 +210,17 @@ export const createDiagramLinkTemplate = () => {
                 new go.Binding("editable", "type", type => ["C+", "C-", "V+", "V-"].includes(type?.slice(0, 2))),
                 new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
                 new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 10pt helvetica, arial, sans-serif"),
-
+                // Add the following binding to hide the text block for links coming from exclusion nodes
+                new go.Binding("visible", "fromNode", (fromNode) => {
+                    return fromNode.category !== "Exclusion";
+                }).ofObject(),
             )
         )
     );
 };
 
 export const junctionNodeTemplate = () => {
-    return $(go.Node, "Auto", 
+    return $(go.Node, "Auto",
                 {
                     isTreeExpanded: false,
                     deletable: true
@@ -201,6 +231,39 @@ export const junctionNodeTemplate = () => {
                 ),
             )
 }
+
+export const exclusionNodeTemplate = () => {
+    
+    return $(go.Node, "Auto",
+                {
+                    locationObjectName: "main",
+                    locationSpot: go.Spot.Center,
+                    selectionObjectName: "main",
+                    movable: true,  
+                    deletable: true,
+                    fromLinkable: true,
+                    selectable: true,
+                    resizable: true,
+                    rotatable: true,
+                    toLinkable: false, // Disable linking to this node
+                    category: "Exclusion" 
+                },
+                new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                new go.Binding("location").makeTwoWay(),
+                new go.Binding("key", "key").makeTwoWay(),
+                $(go.Shape, "Circle", 
+                    { 
+                    strokeWidth: 1,
+                    stroke: "black",
+                    width: 30, height: 30, 
+                    fill: "red",
+                    fromLinkable: true,
+                    toLinkable: false, // Disable linking to this shape
+                },
+                ),
+    )
+}
+
 
 export const createPaletteLinkTemplate = () => {
     return $(go.Link,

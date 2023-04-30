@@ -24,7 +24,8 @@ export const diagramConfiguration = {
 };
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
-    { text: "Goal Node", color: "#ACF3DA", location: new go.Point(0, 0) }
+    { text: "Goal Node", shape: "Terminator", color: "#ACF3DA", location: new go.Point(0, 0) },
+    { text: "Exclusion Node", color: "#FF0000", shape: "Circle", width: 25, height: 25, location: new go.Point(0, 0), category: "Exclusion" }
 ];
 
 export const paletteLinkDataArray = [
@@ -34,6 +35,7 @@ export const paletteLinkDataArray = [
         color: "black",
         text: "Refinement",
         type: "Refinement",
+        category: "Refinement",
         fromArrow: "BackwardTriangle",
         toArrow: "",
         fromShortLength: 8,
@@ -58,6 +60,7 @@ export const paletteLinkDataArray = [
         fromArrow: "Backward",
         text: "Precedence",
         type: "Precedence",
+        category: "Precedence",
         toArrow: "",
         fromShortLength: 8,
         toShortLength: 0,
@@ -69,6 +72,7 @@ export const paletteLinkDataArray = [
         dash: [2, 2],
         text: "Positive Cost Contr.",
         type: "C+",
+        category: "C+",
         fromArrow: "BackwardTriangle",
         toArrow: "",
         fromShortLength: 8,
@@ -82,6 +86,7 @@ export const paletteLinkDataArray = [
         fromArrow: "BackwardTriangle",
         text: "Negative Cost Contr.",
         type: "C-",
+        category: "C-",
         toArrow: "",
         fromShortLength: 8,
         toShortLength: 0,
@@ -94,6 +99,7 @@ export const paletteLinkDataArray = [
         fromArrow: "BackwardBoomerang",
         text: "Positive Value Contr.",
         type: "V+",
+        category: "V+",
         toArrow: "",
         fromShortLength: 8,
         toShortLength: 0,
@@ -106,23 +112,13 @@ export const paletteLinkDataArray = [
         fromArrow: "BackwardBoomerang",
         text: "Negative Value Contr.",
         type: "V-",
+        category: "V-",
         toArrow: "",
         fromShortLength: 8,
         toShortLength: 0,
         segmentOffset: new go.Point(5, 20)
     },
-    { 
-        points: new go.List(/*go.Point*/).addAll([new go.Point(0, 0), new go.Point(60, 15)]), 
-        color: "red",
-        dash: [6, 3],
-        fromArrow: "BackwardTriangle",
-        text: "Exclusion",
-        type: "Exclusion",
-        toArrow: "",
-        fromShortLength: 8,
-        toShortLength: 0,
-        segmentOffset: new go.Point(5, 20)
-    }
+
 ];
 
 export const paletteConfiguration = { 
