@@ -19,7 +19,8 @@ import {
     createPaletteLinkTemplate, 
     createPaletteNodeTemplate,
     detectCycleForSpecificLinkType,
-    junctionNodeTemplate
+    junctionNodeTemplate,
+    exclusionNodeTemplate,
 } from "../../helpers/functions";
 
 import "./HomePage.scss";
@@ -55,16 +56,18 @@ const HomePage = () => {
 
 		// initial diagram node temaplate
         diagram.nodeTemplate = createDiagramNodeTemplate(setSelectedNode);
-
+        
         diagram.nodeTemplateMap.add("Junction", junctionNodeTemplate());
-
+        diagram.nodeTemplateMap.add("Exclusion", exclusionNodeTemplate());
 		// initial diagram link template
         diagram.linkTemplate = createDiagramLinkTemplate(setSelectedNode);
+          
 
         diagram.linkTemplateMap.add("ANDRefinement", createDiagramLinkTemplate(setSelectedNode))
             
         diagram.model = new go.GraphLinksModel();
-
+        
+          
         setDiagramObject(diagram);
         
     }, []);
@@ -96,6 +99,18 @@ const HomePage = () => {
                     alert(`Cannot create cycle with ${cycleTypes[i]} links!`);
                     diagramObject.remove(link);
                     break;
+                }
+            }
+        }
+
+        const exclusionLinkCheck = (e) => {
+            const link = e.subject;
+            const fromNode = link?.fromNode;
+            const toNode = link?.toNode;
+            if(fromNode.category === "Exclusion" || toNode.category === "Exclusion"){
+                if(link.category){
+                    diagramObject.remove(link);
+                    
                 }
             }
         }
@@ -213,6 +228,7 @@ const HomePage = () => {
         const linkEventListener = (e) => {
             cycleDetectFunction(e);
             junctionConstruction(e);
+            exclusionLinkCheck(e);
         }
 
         diagramObject.addDiagramListener("LinkDrawn", linkEventListener);
@@ -258,7 +274,7 @@ const HomePage = () => {
                     let nodeCount = 0;
                     // Iterate through all the nodes in the diagram
                     diagramObject.nodes.each(function (node) {
-                        if(node?.data?.category !== "Junction") nodeCount = nodeCount + 1;
+                        if(!(node?.data?.category === "Junction" || node?.data?.category === "Exclusion")) nodeCount = nodeCount + 1;
                     });
 
                     diagramObject.model.setDataProperty(obj.data, "text", "Goal " + nodeCount);
