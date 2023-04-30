@@ -1,3 +1,4 @@
+const os = require('os');
 const fs = require('fs');
 const { spawn } = require('child_process');
 
@@ -365,8 +366,16 @@ const runOptiMathSat = (inputFile, outputFile) => {
     // program outputs
     let content = "";
 
-    // define the command to run OptiMathSat
-    const command = 'optimathsat/bin/optimathsat';
+    const platform = os.platform();
+    let command = 'optimathsat';
+    if(platform === 'win32')
+        command = 'optimathsat/win32/optimathsat';
+    else if(platform === 'darwin')
+        command = 'optimathsat/mac/optimathsat'
+    else if(platform === 'linux')
+        command = 'optimathsat/linux/optimathsat'
+
+
 
     // define the arguments to pass to OptiMathSat
     const args = [inputFile];
