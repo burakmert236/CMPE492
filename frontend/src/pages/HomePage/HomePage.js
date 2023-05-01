@@ -107,10 +107,15 @@ const HomePage = () => {
             const link = e.subject;
             const fromNode = link?.fromNode;
             const toNode = link?.toNode;
-            if(fromNode.category === "Exclusion" || toNode.category === "Exclusion"){
-                if(link.category){
+
+            if(!toNode && !link?.category) {
+                diagramObject.remove(link);
+                return;
+            }
+
+             if(fromNode?.category === "Exclusion" || toNode?.category === "Exclusion"){
+                if(link?.category){
                     diagramObject.remove(link);
-                    
                 }
             }
         }

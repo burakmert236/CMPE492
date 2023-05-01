@@ -130,9 +130,9 @@ export const createDiagramLinkTemplate = () => {
         new go.Binding("relinkableTo").makeTwoWay(),
         new go.Binding("reshapable").makeTwoWay(),
         new go.Binding("selectable").makeTwoWay(),
+        new go.Binding("category", "", (linkData) => linkData.category),
         {
             corner: 10,
-            toShortLength: 8,
             curve: go.Link.Bezier,
             adjusting: go.Link.Stretch,
         },
@@ -190,10 +190,9 @@ export const createDiagramLinkTemplate = () => {
             $(go.Shape, "RoundedRectangle",  // the link shape
                 { fill: "#fff", stroke: null },
                 new go.Binding("fill", "color"),
-                new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
-                new go.Binding("visible", "fromNode", (fromNode) => {
-                    return fromNode.category !== "Exclusion";
-                }).ofObject(),
+                new go.Binding("visible", "", (l) => {
+                    return l.category !== "Refinement" && l.category !== "ANDRefinement" && l.cateogry !== undefined;
+                })
             ),
 
             $(go.TextBlock,
@@ -208,12 +207,9 @@ export const createDiagramLinkTemplate = () => {
                 },
                 new go.Binding("text").makeTwoWay(),
                 new go.Binding("editable", "type", type => ["C+", "C-", "V+", "V-"].includes(type?.slice(0, 2))),
-                new go.Binding("visible", "type", type => (type !== "Refinement") && (type !== "AND Refinement")),
-                new go.Binding("font", "type", type => type === "Refinement" ? "0pt helvetica, arial, sans-serif" : "bold 10pt helvetica, arial, sans-serif"),
-                // Add the following binding to hide the text block for links coming from exclusion nodes
-                new go.Binding("visible", "fromNode", (fromNode) => {
-                    return fromNode.category !== "Exclusion";
-                }).ofObject(),
+                new go.Binding("visible", "", (l) => {
+                    return l.category !== "Refinement" && l.category !== "ANDRefinement" && l.cateogry !== undefined;
+                })
             )
         )
     );
@@ -234,33 +230,39 @@ export const junctionNodeTemplate = () => {
 
 export const exclusionNodeTemplate = () => {
     
-    return $(go.Node, "Auto",
-                {
-                    locationObjectName: "main",
-                    locationSpot: go.Spot.Center,
-                    selectionObjectName: "main",
-                    movable: true,  
-                    deletable: true,
-                    fromLinkable: true,
-                    selectable: true,
-                    resizable: true,
-                    rotatable: true,
-                    toLinkable: false, // Disable linking to this node
-                    category: "Exclusion" 
-                },
-                new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-                new go.Binding("location").makeTwoWay(),
-                new go.Binding("key", "key").makeTwoWay(),
-                $(go.Shape, "Circle", 
-                    { 
-                    strokeWidth: 1,
-                    stroke: "black",
+    return $(go.Node, "Spot",
+        {
+            locationSpot: go.Spot.Center,
+            deletable: true,
+            selectable: true,
+            rotatable: false,
+            category: "Exclusion" 
+        },
+        new go.Binding("location").makeTwoWay(),
+        new go.Binding("key", "key").makeTwoWay(),
+
+        $(go.Panel, "Auto", { name: "PANEL" },
+            $(go.Shape, "Circle", 
+                { 
+                    portId: "",
+                    cursor: "pointer",
                     width: 30, height: 30, 
-                    fill: "red",
+                    fill: "#Cf080d",
                     fromLinkable: true,
                     toLinkable: false, // Disable linking to this shape
                 },
-                ),
+            ),
+
+            $(go.Shape, "Circle", 
+                { 
+                    portId: "",
+                    width: 20, height: 20, 
+                    fill: "red",
+                    fromLinkable: false,
+                    toLinkable: false, // Disable linking to this shape
+                },
+            ),
+        ),
     )
 }
 
@@ -275,7 +277,8 @@ export const createPaletteLinkTemplate = () => {
             routing: go.Link.AvoidsNodes,
             curve: go.Link.FlipBoth,
             corner: 5,
-            toShortLength: 8
+            toShortLength: 8,
+            selectionAdornmentTemplate: null
         },
         new go.Binding("points"),
         new go.Binding("fromShortLength").makeTwoWay(),
