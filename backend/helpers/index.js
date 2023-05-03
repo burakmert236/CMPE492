@@ -259,7 +259,7 @@ const leafAndRootNodes = (fileName, model) => {
                 if(l.type === "AND Refinement" && l.to === node.key && l.fromArrow === "Backward" && l.toArrow === "") {
                     parentSingleAndrefinementLink = l;
                 }
-                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "null" && l.toArrow === "null") {
+                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "" && l.toArrow === "") {
                     parentJunctionLink = l;
                 }
 
@@ -269,7 +269,7 @@ const leafAndRootNodes = (fileName, model) => {
                 if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "Backward" && l.toArrow === "") {
                     childSingleAndRefinementLink = l;
                 }
-                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "Backward" && l.toArrow === "null") {
+                if(l.type === "AND Refinement" && l.from === node.key && l.fromArrow === "Backward" && l.toArrow === "") {
                     childJunctionLink = l;
                 }
             }
@@ -356,7 +356,7 @@ const optimizeCriteria = (fileName, criteria) => {
         content += `(maximize (+ ${maximizationKeys?.map(i => `${i}.auto`).join(" ")}))\n`;
     }
 
-    content += "\n(maximize (+ NCC PVC))\n";
+    // content += "\n(maximize (+ NCC PVC))\n";
     content += "(minimize unsat_requirements)\n(minimize sat_tasks)\n(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
