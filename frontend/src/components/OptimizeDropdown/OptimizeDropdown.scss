@@ -89,6 +89,7 @@
             flex-direction: column;
 
             .attribute {
+                z-index: 999;
                 display: grid;
                 grid-template-columns: 3.5fr 1fr 2fr 12fr 2fr;
                 margin: 7px 0;

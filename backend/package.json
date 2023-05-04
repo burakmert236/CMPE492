@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/burakmert236/CMPE492-Modeling-Editor#readme",
   "dependencies": {
+    "array-move": "^4.0.0",
     "child_process": "^1.0.2",
     "child-process": "^1.0.2",
     "cors": "^2.8.5",
@@ -25,6 +26,7 @@
     "express": "^4.18.2",
     "helmet": "^6.1.5",
     "http-status": "^1.6.2",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "react-sortable-hoc": "^2.0.0"
   }
 }

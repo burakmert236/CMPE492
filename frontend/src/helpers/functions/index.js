@@ -145,16 +145,11 @@ export const createDiagramLinkTemplate = () => {
             { 
                 isPanelMain: true, 
                 strokeWidth: 3, 
-                strokeDashArray: [0, 0]
+                strokeDashArray: [0, 0],
+                stroke: "red"
             },
             new go.Binding("stroke", "color"),
             new go.Binding("strokeDashArray", "dash"),
-            new go.Binding("stroke", "fromNode", (fromNode) => {
-                if (fromNode.category === "Exclusion") {
-                    return "red";
-                }
-                return "black";
-            }).ofObject(),
         ),
 
         $(go.Shape,  // the arrowhead at the end of the link
@@ -191,7 +186,7 @@ export const createDiagramLinkTemplate = () => {
                 { fill: "#fff", stroke: null },
                 new go.Binding("fill", "color"),
                 new go.Binding("visible", "", (l) => {
-                    return l.category !== "Refinement" && l.category !== "ANDRefinement" && l.cateogry !== undefined;
+                    return l.category !== "Refinement" && l.category !== "ANDRefinement" && l.category !== undefined;
                 })
             ),
 
@@ -208,7 +203,7 @@ export const createDiagramLinkTemplate = () => {
                 new go.Binding("text").makeTwoWay(),
                 new go.Binding("editable", "type", type => ["C+", "C-", "V+", "V-"].includes(type?.slice(0, 2))),
                 new go.Binding("visible", "", (l) => {
-                    return l.category !== "Refinement" && l.category !== "ANDRefinement" && l.cateogry !== undefined;
+                    return l.category !== "Refinement" && l.category !== "ANDRefinement" && l.category !== undefined;
                 })
             )
         )

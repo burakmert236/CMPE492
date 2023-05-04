@@ -158,8 +158,8 @@ const HomePage = () => {
                 const junctionLinkProps = {
                     category: "ANDRefinement",
                     type: "AND Refinement",
-                    toArrow: "null",
-                    fromArrow: "null",
+                    toArrow: "",
+                    fromArrow: "",
                     color: "black",
                     fromShortLength: 8,
                     toShortLength: 0,

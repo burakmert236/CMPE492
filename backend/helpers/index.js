@@ -166,6 +166,28 @@ const refinementGoalRelationships = (fileName, model) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 };
 
+const exclusionFinder = (fileName, model) => {
+    let content = ";;%%%%\n;Exclusion\n;%%%%\n";
+    model?.nodeDataArray?.forEach(node => {
+        if(node?.category === "Exclusion") {
+
+            const exclusionLinks = model?.linkDataArray?.filter(l => {
+                return l?.from === node.key;
+            });
+            const nodes = exclusionLinks.map((l)=> { 
+                return model?.nodeDataArray?.find((n)=> {
+                    return n.key === l.to;
+                })
+            })
+            content = content + `(assert (not (and ${nodes.map((n) => n.label).join(" ")})))\n`;
+        }
+    })
+
+    content = content + "\n";
+
+    fs.writeFileSync(fileName, content, { flag: 'a+' });
+}
+
 const mandatoryNodes = (fileName, model) => {
     let content = ";;%%%%\n;Mandatory goals\n;%%%%\n";
 
@@ -217,7 +239,7 @@ const contributions = (fileName, model) => {
 const goalAttributes = (fileName, model) => {
     let content = ";;%%%%\n;Goal Attributes\n;%%%%\n";
 
-    model.nodeDataArray?.forEach(node => {
+    model.nodeDataArray?.filter((node) => node?.category !== "Exclusion").forEach(node => {
         if(node.label.slice(0, 1) === "G") {
             content = content + `(assert-soft (not ${node.label}) :weight ${node.cost || 1} :id cost)\n`;
             content = content + `(assert-soft (not ${node.label}) :weight ${node.value || 1} :id value)\n`;
@@ -409,6 +431,7 @@ module.exports = {
     implementedNodes,
     contributions,
     goalAttributes,
+    exclusionFinder,
     leafAndRootNodes,
     precedenceRelationships,
     optimizeCriteria,

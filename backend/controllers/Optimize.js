@@ -8,6 +8,7 @@ const {
     implementedNodes,
     contributions,
     goalAttributes,
+    exclusionFinder,
     leafAndRootNodes,
     precedenceRelationships,
     optimizeCriteria,
@@ -31,7 +32,7 @@ const optimize = async (req, res) => {
         precedenceRelationships(inputFile, model);
         contributions(inputFile, model);
         goalAttributes(inputFile, model);
-        // do exclusions
+        exclusionFinder(inputFile, model);
         leafAndRootNodes(inputFile, model);
         optimizeCriteria(inputFile, criteria);
 
