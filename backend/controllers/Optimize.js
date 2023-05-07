@@ -17,7 +17,7 @@ const {
 
 const optimize = async (req, res) => {
     try {
-        let { model, criteria, type } = req.body;
+        let { model, criteria, type, minUnsatReq, minSatTask } = req.body;
         model = JSON.parse(model);
 
         const inputFile = "./model.smt2";
@@ -34,7 +34,7 @@ const optimize = async (req, res) => {
         goalAttributes(inputFile, model);
         exclusionFinder(inputFile, model);
         leafAndRootNodes(inputFile, model);
-        optimizeCriteria(inputFile, criteria);
+        optimizeCriteria(inputFile, criteria, minUnsatReq, minSatTask);
 
         runOptiMathSat(inputFile, outputFile);
 

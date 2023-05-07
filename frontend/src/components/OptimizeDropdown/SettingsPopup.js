@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Radio, Select } from 'antd';
+import { Radio, Select, Checkbox, Input, Button, Collapse, Switch } from 'antd';
 import { capitalize } from "../../helpers/functions";
 import { arrayMoveImmutable } from 'array-move';
 import SortableList from './OrderDecider';
 
 import "./OptimizeDropdown.scss";
 
+const { Panel } = Collapse;
+
 const SettingsPopup = ({
     optimizationType,
     setOptimizationType,
     criteriaAttributes,
-    setCriteriaAttributes
+    setCriteriaAttributes,
+    minSatTask,
+    setMinSatTask,
+    minUnsatReq,
+    setMinUnsatReq
 }) => {
 
     const { attributes: stateAttributes } = useSelector((state) => state.attributes);
 
     const [integerAttributes, setIntegerAttributes] = useState([]);
+    const [smtCommand, setSmtCommand] = useState("");
     
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setCriteriaAttributes(prevItem => (arrayMoveImmutable(prevItem, oldIndex, newIndex)));
@@ -82,9 +89,47 @@ const SettingsPopup = ({
 
             <div className="optimization-type">
                 <span className="label bold">
-                    Optimization Criteria
+                    Optimization Criteria 
+                    <span style={{ color: "grey", marginLeft: "5px" }}>{optimizationType === "lex" ? "(You can order items by drag-and-drop)": ""}</span>
                 </span>
-                <SortableList items={criteriaAttributes} setItems={setCriteriaAttributes} updateField={updateField} setIntegerAttributes={setIntegerAttributes} onSortEnd={onSortEnd} />
+                
+                <div className="checkbox-container">
+                    <Checkbox checked={minUnsatReq} onChange={() => setMinUnsatReq(v => !v)}>
+                        Minimize unsatisfactory requirements
+                    </Checkbox>
+                    <Checkbox checked={minSatTask} onChange={() => setMinSatTask(v => !v)}>
+                        Minimize satisfactory tasks
+                    </Checkbox>
+                </div>
+
+                <div className="advanced-options">
+                    <Collapse collapsible="header">  
+                        <Panel header="Advanced Options" key="1">  
+                            <span className="label bold">
+                                <span style={{ color: "grey", marginLeft: "5px", fontWeight: "300" }}>You can add SMT command here</span>
+                            </span>
+                            <div className="input-button">
+                                <Input value={smtCommand} onChange={e => setSmtCommand(e.target.value)}/>
+                                <Button type="primary" onClick={() => {
+                                    setCriteriaAttributes(ca => [
+                                        ...ca,
+                                        { command: smtCommand, extra: true, smt: true, key: new Date().getTime() }
+                                    ]);
+                                    setSmtCommand("");
+                                }}>Add</Button>
+                            </div>
+                        </Panel>  
+                    </Collapse>
+                </div>
+
+                <SortableList 
+                    items={criteriaAttributes} 
+                    setItems={setCriteriaAttributes} 
+                    updateField={updateField} 
+                    setIntegerAttributes={setIntegerAttributes} 
+                    onSortEnd={onSortEnd}
+                    disableItems={optimizationType !== "lex"}
+                />
             </div>
         </div>
     )

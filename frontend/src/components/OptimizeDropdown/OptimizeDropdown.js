@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Switch, Modal } from 'antd';
-import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
-import { capitalize } from "../../helpers/functions";
+import React, { useState } from "react";
+import { Modal, Button } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { optimize } from "../../redux/optimizeSlice";
 import SettingsPopup from "./SettingsPopup";
 
@@ -13,6 +11,9 @@ const OptimizeDropdown = ({ diagram }) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [optimizationType, setOptimizationType] = useState("lex");
+    const [minUnsatReq, setMinUnsatReq] = useState(false);
+    const [minSatTask, setMinSatTask] = useState(false);
+
     const [criteriaAttributes, setCriteriaAttributes] = useState([
         {
             key: "cost",
@@ -25,7 +26,7 @@ const OptimizeDropdown = ({ diagram }) => {
     ]);
 
     const handleOptimize = () => {
-        optimize(diagram.model, criteriaAttributes, optimizationType)
+        optimize(diagram.model, criteriaAttributes, optimizationType, minUnsatReq, minSatTask)
             .then(res => console.log(res))
             .catch(res => console.log("err", res))
     }
@@ -35,16 +36,33 @@ const OptimizeDropdown = ({ diagram }) => {
             <Modal 
                 open={modalVisible}
                 onCancel={() => setModalVisible(v => !v)}
-                footer={[]}
                 title="Optimization Settings"
                 width="65%"
                 bodyStyle={{ maxHeight: "60vh" }}
+                footer={[(
+                    <div style={{ 
+                        zIndex: "3000", 
+                        marginTop: "30px", 
+                        padding: "15px", 
+                        borderTop: "0.5px solid grey",
+                        margin: "30px 5px 0 20px"
+                    }}>
+                        <Button type="primary" onClick={() => {
+                            setModalVisible(false);
+                            handleOptimize();
+                        }}>Optimize</Button>
+                    </div>
+                )]}
             >
                 <SettingsPopup 
                     optimizationType={optimizationType}
                     setOptimizationType={setOptimizationType}
                     criteriaAttributes={criteriaAttributes}
                     setCriteriaAttributes={setCriteriaAttributes}
+                    minSatTask={minSatTask}
+                    setMinSatTask={setMinSatTask}
+                    minUnsatReq={minUnsatReq}
+                    setMinUnsatReq={setMinUnsatReq}
                 />
             </Modal>
 

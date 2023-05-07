@@ -1,13 +1,13 @@
 import React from 'react';
 import { SortableElement } from 'react-sortable-hoc';
-import { Switch, Space, InputNumber, Button } from 'antd';
+import { Switch, Space, InputNumber, Button, Input } from 'antd';
 import { capitalize } from "../../helpers/functions";
 import { DeleteOutlined } from '@ant-design/icons';
 import "./OptimizeDropdown.scss";
 
 const SortableItem = (props) => {
-  return <li>
-    <div className="attribute">
+    return(
+        !props?.a?.smt ? <li className={`attribute ${props.disabledItem ? "disabled" : ""}`}> 
             <span className="label">
                 {capitalize(props.a?.key)}
             </span>
@@ -77,9 +77,37 @@ const SortableItem = (props) => {
                     } }
                 >
                     <DeleteOutlined className="trash" />
-                </Button>}
-            </div>
-    </li>
+                </Button>
+            }
+        </li> : 
+
+        <li className={`attribute command ${props.disabledItem ? "disabled" : ""}`}>    
+            <span className='label'>
+                SMT Command
+            </span>
+
+            <Input value={props?.a?.command} onChange={e => {
+                const index = props?.items?.findIndex(i => i?.key === props?.a?.key);
+                props.setItems([
+                    ...props.items.slice(0, index),
+                    { ...props.items[index], command: e.target.value },
+                    ...props.items.slice(index + 1),
+                ])
+            }}/>
+
+            {props.a?.extra &&
+                <Button
+                    className="trash-button"
+                    onClick={() => {
+                        props.setItems(c => c?.filter(ca => ca?.key !== props.a?.key));
+                    } }
+                >
+                    <DeleteOutlined className="trash" />
+                </Button>
+            }
+        </li>
+        
+    )
 }
 
 export default SortableElement(SortableItem);

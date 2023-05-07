@@ -342,10 +342,10 @@ const precedenceRelationships = (fileName, model) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 };
 
-const optimizeCriteria = (fileName, criteria) => {
+const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
     let content = ";;%%\n;;Optimization:\n;;%%\n";
 
-    criteria?.forEach(criterion => {
+    criteria?.filter(criterion => !criterion?.smt)?.forEach(criterion => {
         content += `(declare-fun ${criterion?.key}.auto () Real)\n`;
         content += `(assert (= ${criterion?.key}.auto (- ${criterion?.key} 0)))\n`;
     });
@@ -363,23 +363,26 @@ const optimizeCriteria = (fileName, criteria) => {
 
     content += "\n";
 
-    const minimizationKeys = criteria?.filter(c => !c?.disabled && c?.min === true)?.map(c => c?.key);
-    const maximizationKeys = criteria?.filter(c => !c?.disabled && c?.min === false)?.map(c => c?.key);
+    for(const criterion of criteria) {
+        if(criterion?.smt) {
+            content += `${criterion?.command}\n`;
+            continue;
+        }
 
-    if(minimizationKeys?.length === 1) {
-        content += `(minimize ${minimizationKeys[0]}.auto)\n`;
-    } else if(minimizationKeys?.length > 1) {
-        content += `(minimize (+ ${minimizationKeys?.map(i => `${i}.auto`).join(" ")}))\n`;
+        if(!criterion?.disabled) {
+            if(criterion?.min) {
+                content += `(minimize ${criterion?.key}.auto)\n`;
+            } else {
+                content += `(maximize ${criterion?.key}.auto)\n`;
+            }
+        }
     }
 
-    if(maximizationKeys?.length === 1) {
-        content += `(maximize ${maximizationKeys[0]}.auto)\n`;
-    } else if(maximizationKeys?.length > 1) {
-        content += `(maximize (+ ${maximizationKeys?.map(i => `${i}.auto`).join(" ")}))\n`;
-    }
+    if(minUnsatReq) content += "\n(minimize unsat_requirements)\n";
+    if(minSatTask) content += "(minimize sat_tasks)\n\n";
 
     // content += "\n(maximize (+ NCC PVC))\n";
-    content += "(minimize unsat_requirements)\n(minimize sat_tasks)\n(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
+    content += "(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 }

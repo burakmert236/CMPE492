@@ -40,3 +40,40 @@
     transform: rotate(360deg);
   }
 }
+
+.attribute {
+  z-index: 2000;
+  display: grid;
+  grid-template-columns: 3.5fr 1fr 2fr 12fr 2fr;
+  margin: 7px 0;
+  border: 0.5px solid rgb(224, 224, 224);
+  border-radius: 5px;
+  padding: 10px 15px;
+  gap: 10px;
+  cursor: move;
+  position: relative;
+  background-color: white;
+
+  .trash-button {
+      color: red;
+  }
+
+  .label {
+      display: flex;
+      align-items: center;
+  }
+
+  .attribute-switch {
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+  }
+
+  .attribute-range {
+      padding: 0 0 0 2rem;
+  }
+}
+
+.command {
+  grid-template-columns: 3.5fr 14fr 1.3fr;
+}
