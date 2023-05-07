@@ -9,7 +9,7 @@ import Canvas from "../../components/Canvas/Canvas";
 import { 
     diagramConfiguration, 
     paletteNodeDataArray, 
-    paletteLinkDataArray, 
+    paletteLinkDataArray,
     paletteConfiguration 
 } from "../../helpers/constants";
 
@@ -31,6 +31,7 @@ const HomePage = () => {
 
     const diagramRef = useRef(null);
     const paletteRef = useRef(null);
+    const paletteExclusionRef = useRef(null);
     const commandHandlerRef = useRef(null);
     const [selectedNode, setSelectedNode] = useState(null);
     const [diagramObject, setDiagramObject] = useState();

@@ -25,7 +25,7 @@ export const diagramConfiguration = {
 
 export const paletteNodeDataArray = [  // specify the contents of the Palette
     { text: "Goal Node", shape: "Terminator", color: "#ACF3DA", location: new go.Point(0, 0) },
-    { text: "Exclusion Node", color: "#FF0000", shape: "Circle", width: 25, height: 25, location: new go.Point(0, 0), category: "Exclusion" }
+    { text: "Exclusion", color: "#FF0000", shape: "Circle", width: 25, height: 25, location: new go.Point(0, 0), category: "Exclusion" }
 ];
 
 export const paletteLinkDataArray = [
