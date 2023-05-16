@@ -89,6 +89,14 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                 },
                 new go.Binding("figure", "shape"),
                 new go.Binding("fill", "color"),
+                new go.Binding("fill", "", data => {
+                    if(data.smt_result === true) {
+                        return "#B0f3ac";
+                    }
+                    if(data.smt_result === false) {
+                        return "#F56668";
+                    }
+                }),
                 new go.Binding("stroke", "is_mandatory", is_mandatory => {
                     return is_mandatory ? "#D41c00" : "#000"
                 }),

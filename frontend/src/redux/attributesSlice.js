@@ -47,8 +47,8 @@ const attributesSlice = createSlice({
       },
     },
     extraReducers: {},
-  });
-  
-  export const { setAttributes } = attributesSlice.actions;
-  
-  export default attributesSlice.reducer;
+});
+
+export const { setAttributes } = attributesSlice.actions;
+
+export default attributesSlice.reducer;

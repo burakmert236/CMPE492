@@ -1,19 +1,10 @@
 unsupported
-(error "optimization not supported")
-(error "optimization not supported")
-(error "optimization not supported")
-(error "optimization not supported")
-(error "optimization not supported")
-(error "optimization not supported")
-(error "optimization not supported")
-(error "unknown symbol: cost (line: 64)")
-(error "unknown symbol: value (line: 66)")
+(error "unknown symbol: cost (line: 53)")
+(error "unknown symbol: value (line: 55)")
 (error "optimization not supported")
 (error "optimization not supported")
 sat
 (error "optimization not supported")
 (error "optimization not supported")
 (model
-  (define-fun G1 () Bool false)
-  (define-fun G2 () Bool false)
 )

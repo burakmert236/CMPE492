@@ -1,6 +1,8 @@
 import React from "react";
 import { Dropdown, Space } from 'antd';
+import { useDispatch } from "react-redux";
 import { DownOutlined } from '@ant-design/icons';
+import { setLastSolution } from "../../redux/optimizeSlice";
 import * as go from "gojs";
 
 import OptimizeDropdown from "../OptimizeDropdown/OptimizeDropdown";
@@ -8,6 +10,9 @@ import OptimizeDropdown from "../OptimizeDropdown/OptimizeDropdown";
 import "./Navbar.scss";
 
 const Navbar = ({ commandHandlerRef, diagram }) => {
+
+    const dispatch = useDispatch();
+
     const generateExportLines = (type, index, func) => {
         return {
             key: `1-${index}`,
@@ -122,7 +127,18 @@ const Navbar = ({ commandHandlerRef, diagram }) => {
             reader.onload = function(e) {
                 // Parse the JSON data and load it into the diagram
                 const jsonData = JSON.parse(e.target.result);
-                diagram.model = go.Model.fromJson(jsonData);
+
+                let isResult = false;
+
+                jsonData?.nodeDataArray?.forEach(node => {
+                    if(node?.smt_result === true || node?.smt_result === false) {
+                        isResult = true;
+                    }
+                })
+
+                if(isResult) dispatch(setLastSolution(JSON.parse(JSON.stringify(jsonData))));
+
+                diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(jsonData)));
             };
             reader.readAsText(e.target.files[0]);
         }

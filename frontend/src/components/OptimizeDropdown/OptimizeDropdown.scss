@@ -13,6 +13,10 @@
         font-weight: 600;
         cursor: pointer;
 
+        .loading {
+            cursor: not-allowed;
+        }
+
         .settings-button {
             margin-left: 10px;
         }

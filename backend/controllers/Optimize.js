@@ -36,6 +36,11 @@ const optimize = async (req, res) => {
         leafAndRootNodes(inputFile, model);
         optimizeCriteria(inputFile, criteria, minUnsatReq, minSatTask);
 
+
+        for(let i = 0; i< 100000; i++) {
+            console.log(i)
+        }
+
         runOptiMathSat(inputFile, outputFile);
 
         return res.status(httpStatus.OK).send();

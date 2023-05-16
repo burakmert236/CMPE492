@@ -2,11 +2,15 @@
     height: calc(100% - 20px);
     width: calc(100% - 20px);
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     .attributes {
         display: flex;
         flex-direction: column;
         gap: 10px;
+        height: 90%;
 
         .title {
             margin: 8px 0;
@@ -30,6 +34,10 @@
                 color: red;
             }
         }
+    }
+
+    .back-to-last-button {
+        width: 100%;
     }
 }
 

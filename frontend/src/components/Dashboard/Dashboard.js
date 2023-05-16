@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Select, Input, InputNumber, Space, Checkbox } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import { setAttributes as setStateAttributes } from "../../redux/attributesSlice";
 import { capitalize } from "../../helpers/functions";
+import * as go from "gojs";
 
 import "./Dashboard.scss";
 const { TextArea } = Input;
 
 const Dashboard = ({ selectedNode, diagram }) => {
   const dispatch = useDispatch();
+
+  const { lastSolution } = useSelector((state) => state.optimize);
 
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
@@ -185,7 +188,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
             </div>
           </div>
           
-          <div style={{ maxHeight: "110px", overflow: "scroll", margin: "5px 0" }}>
+          <div style={{ maxHeight: "140px", overflow: "scroll", margin: "5px 0" }}>
             {attributes?.map((attr) => (
               <div key={attr.key} className="new-single-line">
                 <span>{capitalize(attr.key)}</span>
@@ -262,6 +265,15 @@ const Dashboard = ({ selectedNode, diagram }) => {
           <p>Select a goal to view its properties</p>
         </div>
       )}
+
+      { lastSolution?.class &&
+        <div className="back-to-last-button">
+          <Button type="primary" style={{width: "100%"}}  onClick={() => {
+            diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastSolution)));
+          }} >Back to last solution</Button>
+        </div>
+      }
+
     </div>
   );
 };
