@@ -7,7 +7,7 @@ import "./OptimizeDropdown.scss";
 
 const SortableItem = (props) => {
     return(
-        !props?.a?.smt ? <li className={`attribute ${props.disabledItem ? "disabled" : ""}`}> 
+        !props?.a?.smt ? <li className={`attribute ${props.disabledItem && "disabled"} ${props?.a?.contribution && "contribution"}`}> 
             <span className="label">
                 {capitalize(props.a?.key)}
             </span>
@@ -34,11 +34,11 @@ const SortableItem = (props) => {
                 } }
             >
                 {props.a?.disabled ?
-                    (props.a?.min ? "Enable Maximization" : "Enable Minimization") :
-                    (props.a?.min ? "Disable Maximization" : "Disable Minimization")}
+                    (props.a?.max ? "Enable Maximization" : "Enable Minimization") :
+                    (props.a?.max ? "Disable Maximization" : "Disable Minimization")}
             </Button>
 
-            <div className="attribute-range">
+            { !props?.a?.contribution && <div className="attribute-range">
                 <Space.Compact>
                     <InputNumber
                         placeholder="min-range"
@@ -61,7 +61,7 @@ const SortableItem = (props) => {
                             width: '50%',
                         }} />
                 </Space.Compact>
-            </div>
+            </div>}
 
 
             {props.a?.extra &&

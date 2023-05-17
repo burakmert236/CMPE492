@@ -114,6 +114,14 @@ const Dashboard = ({ selectedNode, diagram }) => {
     setIsMandatory(selectedNode?.data?.is_mandatory);
     setIsImplemented(selectedNode?.data?.is_implemented);
   }, [selectedNode]);
+
+  if(selectedNode?.category === "Exclusion") {
+    return (
+      <div>
+        <p>Select a goal to view its properties</p>
+      </div>
+    )
+  }
     
   return (
     <div className="dashboard-container">

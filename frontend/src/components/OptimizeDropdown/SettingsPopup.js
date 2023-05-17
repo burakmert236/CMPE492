@@ -111,6 +111,7 @@ const SettingsPopup = ({
                             <div className="input-button">
                                 <Input value={smtCommand} onChange={e => setSmtCommand(e.target.value)}/>
                                 <Button type="primary" onClick={() => {
+                                    if(!smtCommand) return;
                                     setCriteriaAttributes(ca => [
                                         ...ca,
                                         { command: smtCommand, extra: true, smt: true, key: new Date().getTime() }

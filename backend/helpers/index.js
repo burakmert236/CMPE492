@@ -345,7 +345,7 @@ const precedenceRelationships = (fileName, model) => {
 const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
     let content = ";;%%\n;;Optimization:\n;;%%\n";
 
-    criteria?.filter(criterion => !criterion?.smt)?.forEach(criterion => {
+    criteria?.filter(criterion => !criterion?.smt && !criterion?.contribution)?.forEach(criterion => {
         content += `(declare-fun ${criterion?.key}.auto () Real)\n`;
         content += `(assert (= ${criterion?.key}.auto (- ${criterion?.key} 0)))\n`;
     });
@@ -371,9 +371,9 @@ const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
 
         if(!criterion?.disabled) {
             if(criterion?.min) {
-                content += `(minimize ${criterion?.key}.auto)\n`;
+                content += criterion?.contribution ? `(minimize ${criterion?.label})\n` : `(minimize ${criterion?.key}.auto)\n`;
             } else {
-                content += `(maximize ${criterion?.key}.auto)\n`;
+                content += criterion?.contribution ? `(maximize ${criterion?.label})\n` : `(maximize ${criterion?.key}.auto)\n`;
             }
         }
     }
@@ -381,7 +381,6 @@ const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
     if(minUnsatReq) content += "\n(minimize unsat_requirements)\n";
     if(minSatTask) content += "(minimize sat_tasks)\n\n";
 
-    // content += "\n(maximize (+ NCC PVC))\n";
     content += "(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });

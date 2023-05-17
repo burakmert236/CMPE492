@@ -11,8 +11,6 @@ import "./OptimizeDropdown.scss";
 const OptimizeDropdown = ({ diagram }) => {
     const dispatch = useDispatch();
 
-    const { lastSolution } = useSelector((state) => state.optimize);
-
     const [modalVisible, setModalVisible] = useState(false);
     const [optimizationType, setOptimizationType] = useState("lex");
     const [minUnsatReq, setMinUnsatReq] = useState(false);
@@ -27,6 +25,34 @@ const OptimizeDropdown = ({ diagram }) => {
         {
             key: "value",
             min: false
+        },
+        {
+            key: "Positive Cost Contribution",
+            min: true,
+            contribution: true,
+            disabled: true,
+            label: "PCC"
+        },
+        {
+            key: "Negative Cost Contribution",
+            min: true,
+            contribution: true,
+            disabled: true,
+            label: "NCC"
+        },
+        {
+            key: "Positive Value Contribution",
+            min: true,
+            contribution: true,
+            disabled: true,
+            label: "PVC"
+        },
+        {
+            key: "Negative Value Contribution",
+            min: true,
+            contribution: true,
+            disabled: true,
+            label: "NVC"
         }
     ]);
 

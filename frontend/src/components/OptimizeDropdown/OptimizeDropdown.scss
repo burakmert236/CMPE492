@@ -162,6 +162,10 @@
                 }
             }
 
+            .contribution {
+                grid-template-columns: 2.5fr 1fr 7fr;
+            }
+
             .command {
                 grid-template-columns: 3.5fr 14fr 1.3fr;
             }
