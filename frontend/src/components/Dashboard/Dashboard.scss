@@ -36,8 +36,16 @@
         }
     }
 
-    .back-to-last-button {
-        width: 100%;
+    .back-to-last-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+
+        .back-to-last-button {
+            button {
+                font-size: 0.7rem;
+            }
+        }
     }
 }
 

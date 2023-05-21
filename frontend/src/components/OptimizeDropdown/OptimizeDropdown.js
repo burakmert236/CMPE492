@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, Button } from 'antd';
 import { SettingOutlined, LoadingOutlined } from '@ant-design/icons';
-import { optimize, setLastSolution } from "../../redux/optimizeSlice";
+import { optimize, setLastSolution, setLastEdit } from "../../redux/optimizeSlice";
 import SettingsPopup from "./SettingsPopup";
 import * as go from "gojs";
 
@@ -67,6 +67,7 @@ const OptimizeDropdown = ({ diagram }) => {
             .then(res => {
                 setLoading(false);
                 dispatch(setLastSolution(JSON.parse(result)));
+                dispatch(setLastEdit(null));
                 diagram.model = go.Model.fromJson(JSON.parse(result));
             })
             .catch(res => {

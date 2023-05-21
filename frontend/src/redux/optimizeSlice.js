@@ -17,17 +17,21 @@ const optimizeSlice = createSlice({
     name: 'optimze',
     initialState: {
       lastSolution: {},
+      lastEdit: null,
       status: {},
       error: null,
     },
     reducers: {
         setLastSolution: (state, action) => {
             state.lastSolution = action.payload;
+        },
+        setLastEdit: (state, action) => {
+            state.lastEdit = action.payload;
         }
     },
     extraReducers: {},
 });
 
-export const { setLastSolution } = optimizeSlice.actions;
+export const { setLastSolution, setLastEdit } = optimizeSlice.actions;
 
 export default optimizeSlice.reducer;

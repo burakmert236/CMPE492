@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Select, Input, InputNumber, Space, Checkbox } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import { setAttributes as setStateAttributes } from "../../redux/attributesSlice";
+import { setLastEdit } from "../../redux/optimizeSlice";
 import { capitalize } from "../../helpers/functions";
+import _ from "lodash";
 import * as go from "gojs";
 
 import "./Dashboard.scss";
@@ -12,7 +14,7 @@ const { TextArea } = Input;
 const Dashboard = ({ selectedNode, diagram }) => {
   const dispatch = useDispatch();
 
-  const { lastSolution } = useSelector((state) => state.optimize);
+  const { lastSolution, lastEdit } = useSelector((state) => state.optimize);
 
   const [text, setText] = useState(null); 
   const [value, setValue] = useState(null); 
@@ -275,10 +277,26 @@ const Dashboard = ({ selectedNode, diagram }) => {
       )}
 
       { lastSolution?.class &&
-        <div className="back-to-last-button">
-          <Button type="primary" style={{width: "100%"}}  onClick={() => {
-            diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastSolution)));
-          }} >Back to last solution</Button>
+        <div className="back-to-last-buttons">
+          <div className="back-to-last-button">
+            <Button type="primary" style={{width: "100%"}}  onClick={() => {
+              if(lastEdit) {
+                diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastEdit)));
+              }
+            }} >Back to last edit</Button>
+          </div>
+          <div className="back-to-last-button">
+            <Button type="primary" style={{width: "100%"}}  onClick={() => {
+              const currentLastEdit = diagram.model.toJson();
+              if(_.isEqual(currentLastEdit, lastSolution)) {
+                dispatch(setLastEdit(null));
+              } else {
+                dispatch(setLastEdit(currentLastEdit));
+              }
+
+              diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastSolution)));
+            }} >Back to last solution</Button>
+          </div>
         </div>
       }
 
