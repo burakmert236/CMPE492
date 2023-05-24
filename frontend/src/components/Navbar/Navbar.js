@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Dropdown, Space } from 'antd';
 import { useDispatch } from "react-redux";
 import { DownOutlined } from '@ant-design/icons';
@@ -9,8 +10,8 @@ import OptimizeDropdown from "../OptimizeDropdown/OptimizeDropdown";
 
 import "./Navbar.scss";
 
-const Navbar = ({ commandHandlerRef, diagram }) => {
-
+const Navbar = ({ commandHandlerRef, diagram, navType }) => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const generateExportLines = (type, index, func) => {
@@ -147,9 +148,9 @@ const Navbar = ({ commandHandlerRef, diagram }) => {
     return(
         <div className="navbar">
             <div className="navbar-buttons"> 
-                <div className="navbar-button logo">LOGO</div>
+                <div className="navbar-button logo" onClick={() => navigate("/")}>LOGO</div>
 
-                <div className="navbar-button">
+                {navType !== "landing" && <div className="navbar-button">
                     <Dropdown
                         menu={{
                             items: [
@@ -171,14 +172,16 @@ const Navbar = ({ commandHandlerRef, diagram }) => {
                             <DownOutlined />
                         </Space>
                     </Dropdown>
-                </div>
+                </div>}
 
-                <div className="navbar-button">Options</div>
+                {navType === "landing" && <div className="navbar-button" onClick={() => navigate("/tool")}>Tool</div> }
 
-                <div className="navbar-button">Help</div>
+                {navType !== "landing" && <div className="navbar-button">Options</div> }
+
+                {navType !== "landing" && <div className="navbar-button">Help</div> }
             </div>
 
-            <div className="right-navbar">
+            {navType !== "landing" && <div className="right-navbar">
                 <div className="redo-undo">
                     <div className="undo" onClick={() => handleUndo()}>
                         <div className="triangle right"></div>
@@ -191,7 +194,7 @@ const Navbar = ({ commandHandlerRef, diagram }) => {
                 </div>
 
                 <OptimizeDropdown diagram={diagram}/>
-            </div>
+            </div>}
 
         </div>
     );
