@@ -7,6 +7,8 @@ const initFile = (fileName, type) => {
     type = ["lex", "box", "pareto"]?.includes(type) ? type : "lex";
     const content = `;; activate model generation\n(set-option :produce-models true)\n(set-option :opt.priority ${type})\n\n`;
     fs.writeFileSync(fileName, content);
+
+    return content;
 };
 
 const declareGoalsAndRefinements = (fileName, model) => {
@@ -92,6 +94,7 @@ const declareGoalsAndRefinements = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 };
 
 const closeWorld = (fileName, model) => {
@@ -128,6 +131,7 @@ const closeWorld = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 };
 
 const refinementGoalRelationships = (fileName, model) => {
@@ -165,6 +169,7 @@ const refinementGoalRelationships = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 };
 
 const exclusionFinder = (fileName, model) => {
@@ -187,6 +192,7 @@ const exclusionFinder = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 }
 
 const mandatoryNodes = (fileName, model) => {
@@ -201,6 +207,7 @@ const mandatoryNodes = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content; 
 };
 
 const implementedNodes = (fileName, model) => {
@@ -215,6 +222,7 @@ const implementedNodes = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 };
 
 const contributions = (fileName, model) => {
@@ -235,6 +243,7 @@ const contributions = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 }
 
 const goalAttributes = (fileName, model) => {
@@ -258,6 +267,7 @@ const goalAttributes = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 }
 
 const leafAndRootNodes = (fileName, model) => {
@@ -323,6 +333,7 @@ const leafAndRootNodes = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 }
 
 const precedenceRelationships = (fileName, model) => {
@@ -341,6 +352,7 @@ const precedenceRelationships = (fileName, model) => {
     content = content + "\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 };
 
 const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
@@ -385,6 +397,7 @@ const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
     content += "(check-sat)\n(get-objectives)\n(load-objective-model 1)\n(get-model)\n(exit)\n";
 
     fs.writeFileSync(fileName, content, { flag: 'a+' });
+    return content;
 }
 
 const runOptiMathSat = (inputFile, outputFile, res, model) => {

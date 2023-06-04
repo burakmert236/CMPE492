@@ -7,6 +7,7 @@
 ;%%%%
 (declare-fun G1 () Bool)
 (declare-fun G2 () Bool)
+(declare-fun G3 () Bool)
 (declare-fun R1 () Bool)
 
 ;;%%%%
@@ -22,7 +23,6 @@
 ;;%%%%
 ;Mandatory goals
 ;%%%%
-(assert G1)
 
 ;;%%%%
 ;Implemented goals
@@ -31,6 +31,7 @@
 ;;%%%%
 ;Precedence relationships
 ;%%%%
+(assert (=> G1 G3))
 
 ;;%%%%
 ;Contributions
@@ -40,9 +41,11 @@
 ;Goal Attributes
 ;%%%%
 (assert-soft (not G1) :weight 1 :id cost)
-(assert-soft (not G1) :weight 2 :id value)
-(assert-soft (not G2) :weight 3 :id cost)
-(assert-soft (not G2) :weight 4 :id value)
+(assert-soft (not G1) :weight 1 :id value)
+(assert-soft (not G2) :weight 1 :id cost)
+(assert-soft (not G2) :weight 1 :id value)
+(assert-soft (not G3) :weight 1 :id cost)
+(assert-soft (not G3) :weight 1 :id value)
 
 ;;%%%%
 ;Exclusion
@@ -57,6 +60,7 @@
 ;Root Nodes
 ;%%%%
 (assert-soft (not G1 ) :id unsat_requirements)
+(assert-soft (not G3 ) :id unsat_requirements)
 
 ;;%%
 ;;Optimization:

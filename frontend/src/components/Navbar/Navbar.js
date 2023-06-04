@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropdown, Space } from 'antd';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DownOutlined } from '@ant-design/icons';
-import { setLastSolution } from "../../redux/optimizeSlice";
+import { optimize, setLastSolution } from "../../redux/optimizeSlice";
 import * as go from "gojs";
 
 import OptimizeDropdown from "../OptimizeDropdown/OptimizeDropdown";
@@ -13,6 +13,8 @@ import "./Navbar.scss";
 const Navbar = ({ commandHandlerRef, diagram, navType }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const { criteriaAttributes, optimizationType, minUnsatReq, minSatTask } = useSelector((state) => state.optimize);
 
     const generateExportLines = (type, index, func) => {
         return {
@@ -41,7 +43,7 @@ const Navbar = ({ commandHandlerRef, diagram, navType }) => {
         commandHandlerRef.current.redo();
     }
 
-    const handleDownload = (type, func) => {
+    const handleDownload = async (type, func) => {
         if(func === "Export") {
             const link = document.createElement("a");
             let url = "";
@@ -98,6 +100,16 @@ const Navbar = ({ commandHandlerRef, diagram, navType }) => {
 
                 url = imageData;
                 fileName = "diagram.png";
+            }
+
+            if(type === "SMT") {
+                await optimize({ model: diagram.model, criteriaAttributes, optimizationType, minUnsatReq, minSatTask, isSmtExport: true })
+                    .then(res => {
+                        blob = new Blob([res]);
+                        url = URL.createObjectURL(blob);
+                        fileName = "model.smt2";
+                    })
+                    .catch(err => console.log(err));
             }
 
             // Set the download link attributes

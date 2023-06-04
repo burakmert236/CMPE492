@@ -12,52 +12,10 @@ import OptimizationResults from "./OptimizationResults";
 const OptimizeDropdown = ({ diagram }) => {
     const dispatch = useDispatch();
 
-    const { resultsVisible } = useSelector((state) => state.optimize);
+    const { resultsVisible, criteriaAttributes, optimizationType, minUnsatReq, minSatTask } = useSelector((state) => state.optimize);
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [optimizationType, setOptimizationType] = useState("lex");
-    const [minUnsatReq, setMinUnsatReq] = useState(false);
-    const [minSatTask, setMinSatTask] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    const [criteriaAttributes, setCriteriaAttributes] = useState([
-        {
-            key: "cost",
-            min: true,
-        },
-        {
-            key: "value",
-            min: false
-        },
-        {
-            key: "Positive Cost Contribution",
-            min: true,
-            contribution: true,
-            disabled: true,
-            label: "PCC"
-        },
-        {
-            key: "Negative Cost Contribution",
-            min: true,
-            contribution: true,
-            disabled: true,
-            label: "NCC"
-        },
-        {
-            key: "Positive Value Contribution",
-            min: true,
-            contribution: true,
-            disabled: true,
-            label: "PVC"
-        },
-        {
-            key: "Negative Value Contribution",
-            min: true,
-            contribution: true,
-            disabled: true,
-            label: "NVC"
-        }
-    ]);
 
     const handleOptimize = () => {
         if(loading) return;
@@ -66,7 +24,7 @@ const OptimizeDropdown = ({ diagram }) => {
 
         setLoading(true);
 
-        optimize(diagram.model, criteriaAttributes, optimizationType, minUnsatReq, minSatTask)
+        optimize({ model: diagram.model, criteriaAttributes, optimizationType, minUnsatReq, minSatTask })
             .then(res => {
                 setLoading(false);
 
@@ -83,8 +41,6 @@ const OptimizeDropdown = ({ diagram }) => {
                 console.log("err", res)
             })
     }
-
-    console.log(resultsVisible)
 
     return(
         <div className="optimize-container">
@@ -108,21 +64,12 @@ const OptimizeDropdown = ({ diagram }) => {
                     </div>
                 )]}
             >
-                <SettingsPopup 
-                    optimizationType={optimizationType}
-                    setOptimizationType={setOptimizationType}
-                    criteriaAttributes={criteriaAttributes}
-                    setCriteriaAttributes={setCriteriaAttributes}
-                    minSatTask={minSatTask}
-                    setMinSatTask={setMinSatTask}
-                    minUnsatReq={minUnsatReq}
-                    setMinUnsatReq={setMinUnsatReq}
-                />
+                <SettingsPopup />
             </Modal>
 
             <Modal
                 open={resultsVisible}
-                onCancel={() => dispatch(setResultsVisible(v => !v))}
+                onCancel={() => dispatch(setResultsVisible(false))}
                 title="Optimization Results"
                 width="35%"
                 bodyStyle={{ maxHeight: "60vh" }}

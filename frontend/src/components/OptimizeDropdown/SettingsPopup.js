@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Radio, Select, Checkbox, Input, Button, Collapse, Switch } from 'antd';
+import { Radio, Select, Checkbox, Input, Button, Collapse } from 'antd';
 import { capitalize } from "../../helpers/functions";
+import { setOptimizationType, setCriteriaAttributes, setMinSatTask, setMinUnsatReq } from "../../redux/optimizeSlice";
 import { arrayMoveImmutable } from 'array-move';
 import SortableList from './OrderDecider';
 
@@ -9,18 +10,10 @@ import "./OptimizeDropdown.scss";
 
 const { Panel } = Collapse;
 
-const SettingsPopup = ({
-    optimizationType,
-    setOptimizationType,
-    criteriaAttributes,
-    setCriteriaAttributes,
-    minSatTask,
-    setMinSatTask,
-    minUnsatReq,
-    setMinUnsatReq
-}) => {
+const SettingsPopup = () => {
 
     const { attributes: stateAttributes } = useSelector((state) => state.attributes);
+    const { optimizationType, criteriaAttributes, minSatTask, minUnsatReq } = useSelector((state) => state.optimize);
 
     const [integerAttributes, setIntegerAttributes] = useState([]);
     const [smtCommand, setSmtCommand] = useState("");
