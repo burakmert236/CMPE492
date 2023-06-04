@@ -1,6 +1,7 @@
 const os = require('os');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const httpStatus = require('http-status');
 
 const initFile = (fileName, type) => {
     type = ["lex", "box", "pareto"]?.includes(type) ? type : "lex";
@@ -386,7 +387,7 @@ const optimizeCriteria = (fileName, criteria, minUnsatReq, minSatTask) => {
     fs.writeFileSync(fileName, content, { flag: 'a+' });
 }
 
-const runOptiMathSat = (inputFile, outputFile) => {
+const runOptiMathSat = (inputFile, outputFile, res, model) => {
     // program outputs
     let content = "";
 
@@ -399,17 +400,14 @@ const runOptiMathSat = (inputFile, outputFile) => {
     else if(platform === 'linux')
         command = 'optimathsat/linux/optimathsat'
 
-
-
     // define the arguments to pass to OptiMathSat
-    const args = [inputFile];
+    const args = ["-optimization=true", inputFile];
 
     // spawn the OptiMathSat process with the input and output files as arguments
     const optiMathSat = spawn(command, args);
 
     // handle stdout and stderr output from OptiMathSat
     optiMathSat.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
         content = content + data;
     });
 
@@ -419,7 +417,51 @@ const runOptiMathSat = (inputFile, outputFile) => {
 
     // // handle OptiMathSat exit code
     optiMathSat.on('close', (code) => {
-        console.log(`OptiMathSat exited with code ${code}`);
+        if(code === 0) {
+            const objectiveIndex = content.indexOf("(objectives");
+            const modelIndex = content.indexOf("(model");
+
+            const objectiveText = content.slice(objectiveIndex, modelIndex);
+            const modelText = content.slice(modelIndex);
+
+            const modelExpression = /define-fun G(\d+) \(\) Bool (.*)\)/g;  // new RegExp('some-word(\\d+)', 'i');
+            let modelMatch;
+            let goalResults = {};
+
+            do {
+                modelMatch = modelExpression.exec(modelText);
+                if (modelMatch) {
+                    goalResults[`G${modelMatch[1]}`] = modelMatch[2];
+                }
+            } while (modelMatch);
+
+            model.nodeDataArray = model.nodeDataArray?.map(node => {
+                if(goalResults[node?.label]) {
+                    return {
+                        ...node,
+                        smt_result: goalResults[node?.label]
+                    }
+                }
+                return node;
+            });
+
+
+            const objectiveExpression = /\((.*)\.auto (\d+)/g;
+            let objectiveMatch;
+            let objectiveResults = {};
+
+            do {
+                objectiveMatch = objectiveExpression.exec(objectiveText);
+                if (objectiveMatch) {
+                    objectiveResults[`${objectiveMatch[1]}`] = objectiveMatch[2];
+                }
+            } while (objectiveMatch);
+
+            res.status(httpStatus.OK).send({ model, results: objectiveResults });
+        } else {
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).send();
+        }
+
         fs.writeFileSync(outputFile, content);
     });
 }

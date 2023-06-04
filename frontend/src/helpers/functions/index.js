@@ -90,10 +90,10 @@ export const createDiagramNodeTemplate = (setSelectedNode) => {
                 new go.Binding("figure", "shape"),
                 new go.Binding("fill", "color"),
                 new go.Binding("fill", "", data => {
-                    if(data.smt_result === true) {
+                    if(data.smt_result === "true") {
                         return "#B0f3ac";
                     }
-                    if(data.smt_result === false) {
+                    if(data.smt_result === "false") {
                         return "#F56668";
                     }
                 }),

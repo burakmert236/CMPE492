@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Select, Input, InputNumber, Space, Checkbox } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import { setAttributes as setStateAttributes } from "../../redux/attributesSlice";
-import { setLastEdit } from "../../redux/optimizeSlice";
+import { setLastEdit, setResultsVisible } from "../../redux/optimizeSlice";
 import { capitalize } from "../../helpers/functions";
 import _ from "lodash";
 import * as go from "gojs";
@@ -198,7 +198,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
             </div>
           </div>
           
-          <div style={{ maxHeight: "140px", overflow: "scroll", margin: "5px 0" }}>
+          <div style={{ maxHeight: "140px", overflow: "scroll", margin: "5px 0", display: "flex", gap: "5px", flexDirection: "column" }}>
             {attributes?.map((attr) => (
               <div key={attr.key} className="new-single-line">
                 <span>{capitalize(attr.key)}</span>
@@ -277,25 +277,33 @@ const Dashboard = ({ selectedNode, diagram }) => {
       )}
 
       { lastSolution?.class &&
-        <div className="back-to-last-buttons">
-          <div className="back-to-last-button">
-            <Button type="primary" style={{width: "100%"}}  onClick={() => {
-              if(lastEdit) {
-                diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastEdit)));
-              }
-            }} >Back to last edit</Button>
+        <div>
+          <div className="results-button">
+            <Button style={{width: "100%"}}  onClick={() => {
+              dispatch(setResultsVisible(true));
+            }} >See Last Results</Button>
           </div>
-          <div className="back-to-last-button">
-            <Button type="primary" style={{width: "100%"}}  onClick={() => {
-              const currentLastEdit = diagram.model.toJson();
-              if(_.isEqual(currentLastEdit, lastSolution)) {
-                dispatch(setLastEdit(null));
-              } else {
-                dispatch(setLastEdit(currentLastEdit));
-              }
 
-              diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastSolution)));
-            }} >Back to last solution</Button>
+          <div className="back-to-last-buttons">
+            <div className="back-to-last-button">
+              <Button type="primary" style={{width: "100%"}}  onClick={() => {
+                if(lastEdit) {
+                  diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastEdit)));
+                }
+              }} >Back to last edit</Button>
+            </div>
+            <div className="back-to-last-button">
+              <Button type="primary" style={{width: "100%"}}  onClick={() => {
+                const currentLastEdit = diagram.model.toJson();
+                if(_.isEqual(currentLastEdit, lastSolution)) {
+                  dispatch(setLastEdit(null));
+                } else {
+                  dispatch(setLastEdit(currentLastEdit));
+                }
+
+                diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastSolution)));
+              }} >Back to last solution</Button>
+            </div>
           </div>
         </div>
       }

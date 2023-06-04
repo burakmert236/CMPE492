@@ -20,6 +20,10 @@ const optimize = async (req, res) => {
         let { model, criteria, type, minUnsatReq, minSatTask } = req.body;
         model = JSON.parse(model);
 
+        if(!model?.nodeDataArray?.length) {
+            return res.status(httpStatus.NOT_FOUND).send();
+        }
+
         const inputFile = "./model.smt2";
         const outputFile = "./solution.txt";
         
@@ -36,14 +40,8 @@ const optimize = async (req, res) => {
         leafAndRootNodes(inputFile, model);
         optimizeCriteria(inputFile, criteria, minUnsatReq, minSatTask);
 
+        runOptiMathSat(inputFile, outputFile, res, model);
 
-        for(let i = 0; i< 50000; i++) {
-            console.log(i)
-        }
-
-        runOptiMathSat(inputFile, outputFile);
-
-        return res.status(httpStatus.OK).send();
     } catch (err) {
         console.log(err)
         return res

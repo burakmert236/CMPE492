@@ -1,10 +1,17 @@
-unsupported
-(error "unknown symbol: cost (line: 53)")
-(error "unknown symbol: value (line: 55)")
-(error "optimization not supported")
-(error "optimization not supported")
 sat
-(error "optimization not supported")
-(error "optimization not supported")
+
+(objectives
+ (cost.auto 4)
+ (value.auto 6)
+)
 (model
+  (define-fun G1 () Bool true)
+  (define-fun G2 () Bool true)
+  (define-fun R1 () Bool true)
+  (define-fun cost () Real (to_real 4))
+  (define-fun value () Real (to_real 6))
+  (define-fun sat_tasks () Real (to_real 1))
+  (define-fun unsat_requirements () Real (to_real 1))
+  (define-fun cost.auto () Real (to_real 4))
+  (define-fun value.auto () Real (to_real 6))
 )

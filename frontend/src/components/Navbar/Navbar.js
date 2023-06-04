@@ -132,7 +132,7 @@ const Navbar = ({ commandHandlerRef, diagram, navType }) => {
                 let isResult = false;
 
                 jsonData?.nodeDataArray?.forEach(node => {
-                    if(node?.smt_result === true || node?.smt_result === false) {
+                    if(node?.smt_result === "true" || node?.smt_result === "false") {
                         isResult = true;
                     }
                 })

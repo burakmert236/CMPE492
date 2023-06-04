@@ -1,10 +1,7 @@
 .optimize-container {
-    background-color: #F7B42C;
-    border-radius: 30px;
-    padding: 10px 15px;
     display: flex;
     flex-direction: row;
-    gap: 15px;
+    gap: 10px;
     justify-content: space-between;
     align-items: center;
 
@@ -12,14 +9,19 @@
         font-size: 20px;
         font-weight: 600;
         cursor: pointer;
+        background-color: #F7B42C;
+        border-radius: 25px;
+        padding: 10px 15px;
 
         .loading {
             cursor: not-allowed;
         }
+    }
 
-        .settings-button {
-            margin-left: 10px;
-        }
+    .with-loading {
+        width: 120px;
+        display: flex;
+        justify-content: center;
     }
 }
 
@@ -179,4 +181,10 @@
 
 .bold {
     font-weight: 600;
+}
+
+.results-container {
+    max-height: 70vh;
+    overflow: scroll;
+    padding: 1rem auto;
 }

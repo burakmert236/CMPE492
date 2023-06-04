@@ -20,6 +20,8 @@ const optimizeSlice = createSlice({
       lastEdit: null,
       status: {},
       error: null,
+      results: {},
+      resultsVisible: false
     },
     reducers: {
         setLastSolution: (state, action) => {
@@ -27,11 +29,17 @@ const optimizeSlice = createSlice({
         },
         setLastEdit: (state, action) => {
             state.lastEdit = action.payload;
+        },
+        setResults: (state, action) => {
+            state.results = action.payload;
+        },
+        setResultsVisible: (state, action) => {
+            state.resultsVisible = action.payload;
         }
     },
     extraReducers: {},
 });
 
-export const { setLastSolution, setLastEdit } = optimizeSlice.actions;
+export const { setLastSolution, setLastEdit, setResults, setResultsVisible } = optimizeSlice.actions;
 
 export default optimizeSlice.reducer;
