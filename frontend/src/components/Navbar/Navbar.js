@@ -160,7 +160,9 @@ const Navbar = ({ commandHandlerRef, diagram, navType }) => {
     return(
         <div className="navbar">
             <div className="navbar-buttons"> 
-                <div className="navbar-button logo" onClick={() => navigate("/")}>LOGO</div>
+                <div className="navbar-button logo" onClick={() => navigate("/")}>
+                    <img src={require("./logo.png")} height={50} width={60}/>
+                </div>
 
                 {navType !== "landing" && <div className="navbar-button">
                     <Dropdown
@@ -188,9 +190,6 @@ const Navbar = ({ commandHandlerRef, diagram, navType }) => {
 
                 {navType === "landing" && <div className="navbar-button" onClick={() => navigate("/tool")}>Tool</div> }
 
-                {navType !== "landing" && <div className="navbar-button">Options</div> }
-
-                {navType !== "landing" && <div className="navbar-button">Help</div> }
             </div>
 
             {navType !== "landing" && <div className="right-navbar">
