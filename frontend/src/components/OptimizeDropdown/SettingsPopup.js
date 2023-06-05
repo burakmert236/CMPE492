@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Radio, Select, Checkbox, Input, Button, Collapse } from 'antd';
 import { capitalize } from "../../helpers/functions";
 import { setOptimizationType, setCriteriaAttributes, setMinSatTask, setMinUnsatReq } from "../../redux/optimizeSlice";
@@ -11,6 +11,7 @@ import "./OptimizeDropdown.scss";
 const { Panel } = Collapse;
 
 const SettingsPopup = () => {
+    const dispatch = useDispatch();
 
     const { attributes: stateAttributes } = useSelector((state) => state.attributes);
     const { optimizationType, criteriaAttributes, minSatTask, minUnsatReq } = useSelector((state) => state.optimize);
@@ -19,8 +20,8 @@ const SettingsPopup = () => {
     const [smtCommand, setSmtCommand] = useState("");
     
     const onSortEnd = ({ oldIndex, newIndex }) => {
-        setCriteriaAttributes(prevItem => (arrayMoveImmutable(prevItem, oldIndex, newIndex)));
-      };
+        dispatch(setCriteriaAttributes(arrayMoveImmutable(criteriaAttributes, oldIndex, newIndex)));
+    };
 
     useEffect(() => {
         setIntegerAttributes(stateAttributes?.filter(a => {
@@ -30,15 +31,15 @@ const SettingsPopup = () => {
 
     const updateField = (attributeKey, field, value) => {
         const index = criteriaAttributes.findIndex(c => c?.key === attributeKey);
-        let attr = criteriaAttributes[index];
+        let attr = JSON.parse(JSON.stringify(criteriaAttributes[index]));
 
         attr[field] = value;
 
-        setCriteriaAttributes([
+        dispatch(setCriteriaAttributes([
             ...criteriaAttributes.slice(0, index),
             attr,
             ...criteriaAttributes.slice(index + 1),
-        ]);
+        ]));
     }
 
     return(
@@ -48,7 +49,7 @@ const SettingsPopup = () => {
                     <span className="label bold">
                         Optimization Type
                     </span>
-                    <Radio.Group onChange={(e) => setOptimizationType(e.target.value)} value={optimizationType}>
+                    <Radio.Group onChange={(e) => dispatch(setOptimizationType(e.target.value))} value={optimizationType}>
                         <Radio value={"lex"}>lex</Radio>
                         <Radio value={"box"}>box</Radio>
                         <Radio value={"pareto"}>pareto</Radio>
@@ -64,11 +65,11 @@ const SettingsPopup = () => {
                         value={null}
                         onChange={value => {
                             const entry = integerAttributes?.find(ia => ia?.key === value);
-                            setCriteriaAttributes(ca => [
-                                ...ca,
+                            dispatch(setCriteriaAttributes([
+                                ...criteriaAttributes,
                                 { ...entry, extra: true, min: true }
-                            ]);
-                            setIntegerAttributes(i => i?.filter(ia => ia?.key !== value));
+                            ]));
+                            dispatch(setIntegerAttributes(integerAttributes?.filter(ia => ia?.key !== value)));
                         }}
                         options={integerAttributes?.map(a => {
                             return {
@@ -87,10 +88,10 @@ const SettingsPopup = () => {
                 </span>
                 
                 <div className="checkbox-container">
-                    <Checkbox checked={minUnsatReq} onChange={() => setMinUnsatReq(v => !v)}>
+                    <Checkbox checked={minUnsatReq} onChange={() => dispatch(setMinUnsatReq(!minUnsatReq))}>
                         Minimize unsatisfactory requirements
                     </Checkbox>
-                    <Checkbox checked={minSatTask} onChange={() => setMinSatTask(v => !v)}>
+                    <Checkbox checked={minSatTask} onChange={() => dispatch(setMinSatTask(!minSatTask))}>
                         Minimize satisfactory tasks
                     </Checkbox>
                 </div>
@@ -105,10 +106,10 @@ const SettingsPopup = () => {
                                 <Input value={smtCommand} onChange={e => setSmtCommand(e.target.value)}/>
                                 <Button type="primary" onClick={() => {
                                     if(!smtCommand) return;
-                                    setCriteriaAttributes(ca => [
-                                        ...ca,
+                                    dispatch(setCriteriaAttributes([
+                                        ...criteriaAttributes,
                                         { command: smtCommand, extra: true, smt: true, key: new Date().getTime() }
-                                    ]);
+                                    ]));
                                     setSmtCommand("");
                                 }}>Add</Button>
                             </div>
@@ -118,7 +119,7 @@ const SettingsPopup = () => {
 
                 <SortableList 
                     items={criteriaAttributes} 
-                    setItems={setCriteriaAttributes} 
+                    setItems={(value) => dispatch(setCriteriaAttributes(value))} 
                     updateField={updateField} 
                     setIntegerAttributes={setIntegerAttributes} 
                     onSortEnd={onSortEnd}

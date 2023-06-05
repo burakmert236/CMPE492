@@ -73,7 +73,7 @@ const SortableItem = (props) => {
                         delete copy.max_range;
 
                         props.setIntegerAttributes(ia => [...ia, copy]);
-                        props.setItems(c => c?.filter(ca => ca?.key !== props.a?.key));
+                        props.setItems(props.items?.filter(ca => ca?.key !== props.a?.key));
                     } }
                 >
                     <DeleteOutlined className="trash" />
@@ -99,7 +99,7 @@ const SortableItem = (props) => {
                 <Button
                     className="trash-button"
                     onClick={() => {
-                        props.setItems(c => c?.filter(ca => ca?.key !== props.a?.key));
+                        props.setItems(props.items?.filter(ca => ca?.key !== props.a?.key));
                     } }
                 >
                     <DeleteOutlined className="trash" />
