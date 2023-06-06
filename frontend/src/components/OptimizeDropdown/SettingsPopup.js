@@ -106,7 +106,7 @@ const SettingsPopup = () => {
                             </span>
                             <div className="input-button">
                                 <Input value={smtCommand} onChange={e => setSmtCommand(e.target.value)}/>
-                                <Button type="primary" onClick={() => {
+                                <Button style={{ "backgroundColor": "#00cdb2 !important" }} onClick={() => {
                                     if(!smtCommand) return;
                                     dispatch(setCriteriaAttributes([
                                         ...criteriaAttributes,

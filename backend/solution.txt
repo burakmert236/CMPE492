@@ -1,19 +1,19 @@
 sat
 
 (objectives
- (cost.auto 4)
+ (cost.auto 2)
  (value.auto 2)
 )
 (model
   (define-fun G1 () Bool true)
-  (define-fun G2 () Bool true)
-  (define-fun G3 () Bool false)
-  (define-fun R1 () Bool false)
-  (define-fun R2 () Bool true)
-  (define-fun cost () Real (to_real 4))
+  (define-fun G2 () Bool false)
+  (define-fun G3 () Bool true)
+  (define-fun G4 () Bool false)
+  (define-fun R1 () Bool true)
+  (define-fun cost () Real (to_real 2))
   (define-fun value () Real (to_real 2))
   (define-fun sat_tasks () Real (to_real 1))
   (define-fun unsat_requirements () Real (to_real 1))
-  (define-fun cost.auto () Real (to_real 4))
+  (define-fun cost.auto () Real (to_real 2))
   (define-fun value.auto () Real (to_real 2))
 )

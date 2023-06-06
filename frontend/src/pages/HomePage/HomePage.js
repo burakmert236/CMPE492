@@ -358,6 +358,7 @@ const HomePage = () => {
             <Navbar commandHandlerRef={commandHandlerRef} diagram={diagramObject}/>
 
             <div className="palette-container">
+                <div className="block-color-up"></div>
                 <Palette paletteRef={paletteRef}/>
             </div>
 
@@ -366,7 +367,7 @@ const HomePage = () => {
                 <div className="homepage-dashboard">
                     <Dashboard selectedNode={selectedNode} diagram={diagramObject} />
                 </div>
-
+                <div className="block-color-down"></div>
                 <Canvas diagramRef={diagramRef} />
 
             </div>

@@ -17,7 +17,7 @@ const LandingPage = () => {
                     <div className="definition-container">
                         <h1>Goal Modeling Tool</h1>
                         <p>An open-source, web-based goal modeling tool. Extremely easy to run.</p>
-                        <button  onClick={() => navigate("/tool")}>Start Now</button>
+                        <button style={{ "backgroundColor": "#00cdb2" }} onClick={() => navigate("/tool")}>Start Now</button>
                     </div>
                 </div>
                 <div className="main-image">

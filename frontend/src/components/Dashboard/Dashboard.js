@@ -286,14 +286,14 @@ const Dashboard = ({ selectedNode, diagram }) => {
 
           <div className="back-to-last-buttons">
             <div className="back-to-last-button">
-              <Button type="primary" style={{width: "100%"}}  onClick={() => {
+              <button type="primary" style={{width: "100%"}}  onClick={() => {
                 if(lastEdit) {
                   diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastEdit)));
                 }
-              }} >Back to last edit</Button>
+              }} >Back to last edit</button>
             </div>
             <div className="back-to-last-button">
-              <Button type="primary" style={{width: "100%"}}  onClick={() => {
+              <button type="primary" style={{width: "100%"}}  onClick={() => {
                 const currentLastEdit = diagram.model.toJson();
                 if(_.isEqual(currentLastEdit, lastSolution)) {
                   dispatch(setLastEdit(null));
@@ -302,7 +302,7 @@ const Dashboard = ({ selectedNode, diagram }) => {
                 }
 
                 diagram.model = go.Model.fromJson(JSON.parse(JSON.stringify(lastSolution)));
-              }} >Back to last solution</Button>
+              }} >Back to last solution</button>
             </div>
           </div>
         </div>
