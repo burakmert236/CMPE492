@@ -65,11 +65,13 @@ const SettingsPopup = () => {
                         value={null}
                         onChange={value => {
                             const entry = integerAttributes?.find(ia => ia?.key === value);
+
                             dispatch(setCriteriaAttributes([
                                 ...criteriaAttributes,
                                 { ...entry, extra: true, min: true }
                             ]));
-                            dispatch(setIntegerAttributes(integerAttributes?.filter(ia => ia?.key !== value)));
+
+                            setIntegerAttributes(integerAttributes?.filter(ia => ia?.key !== value));
                         }}
                         options={integerAttributes?.map(a => {
                             return {
