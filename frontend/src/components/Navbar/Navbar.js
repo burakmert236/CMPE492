@@ -161,7 +161,7 @@ const Navbar = ({ commandHandlerRef, diagram, navType }) => {
         <div className="navbar">
             <div className="navbar-buttons"> 
                 <div className="navbar-button logo" onClick={() => navigate("/")}>
-                    <img src={require("./logo.png")} height={50} width={60}/>
+                    <img src={require("./logo.png")} height={50} width={50}/>
                 </div>
 
                 {navType !== "landing" && <div className="navbar-button">
